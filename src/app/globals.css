@@ -38,8 +38,34 @@ h3 { font-size: 1.06rem; }
 .tabs button.active { background: white; color: var(--ink); box-shadow: 0 2px 6px #173c3410; }
 .card { background: white; border: 1px solid var(--line); border-radius: 22px; padding: 30px; box-shadow: 0 8px 25px #173c3404; }
 .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 24px; }
-.date-field { max-width: 210px; }
+.date-field { max-width: 330px; min-width: 0; }
 .date-field label { color: var(--muted); font-size: .75rem; }
+.date-controls { display: flex; gap: 8px; }
+.date-controls input { min-width: 0; }
+.calendar-toggle { padding-inline: 12px; }
+.training-calendar { position: fixed; width: min(420px, calc(100% - 16px)); max-width: none; max-height: calc(100dvh - 16px); overflow-y: auto; padding: 20px; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: white; }
+.training-calendar::backdrop { background: #173c3466; }
+.calendar-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 16px; }
+.calendar-heading h3 { margin: 0; }
+.calendar-heading button { padding: 4px 12px; font-size: 1.4rem; }
+.calendar-navigation { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+.calendar-navigation > div { min-width: 0; flex: 1; }
+.calendar-navigation > div:first-of-type { flex: 1.5; }
+.calendar-navigation button { min-width: 40px; padding: 6px; font-size: 1.3rem; }
+.calendar-navigation select { width: 100%; min-width: 0; min-height: 46px; border: 1px solid var(--line); border-radius: 8px; background: white; color: var(--ink); font: inherit; padding: 4px; }
+.calendar-grid { width: 100%; table-layout: fixed; border-spacing: 0; }
+.calendar-grid th { font-size: .8rem; color: var(--muted); font-weight: 400; padding-bottom: 6px; }
+.calendar-grid td { padding: 2px 0; text-align: center; }
+.calendar-day { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 48px; padding: 2px; border-radius: 9px; background: white; color: var(--ink); border: 2px solid transparent; }
+.calendar-day.today { border-color: var(--green); }
+.calendar-day.selected { background: var(--green); color: white; }
+.calendar-marker { font-size: .55rem; line-height: 10px; height: 10px; }
+.calendar-legend, .calendar-help { font-size: .75rem; color: var(--muted); margin: 12px 0 0; }
+@media (max-width: 380px) {
+  .training-calendar { padding: 10px 4px; }
+  .calendar-heading, .calendar-navigation, .calendar-legend, .calendar-help { margin-left: 4px; margin-right: 4px; }
+  .calendar-navigation { gap: 4px; }
+}
 .attendance-summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .attendance-summary strong { font-size: 2rem; }
 .attendance-summary span { color: var(--muted); }

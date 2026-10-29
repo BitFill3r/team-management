@@ -7,6 +7,7 @@ import { api, displayDate, errorMessage, today } from "@/lib/client";
 import type { Child, Participant, Snapshot, Training } from "@/lib/types";
 import { dateSchema } from "@/lib/validation";
 import AttendanceOverview from "./attendance-overview";
+import TrainingDatePicker from "./training-date-picker";
 
 type View = "training" | "history" | "admin";
 type Undo = { childId: string; present: boolean; version: number };
@@ -143,7 +144,7 @@ export default function Dashboard() {
       {loading ? <section className="card"><p role="status">Die Teamliste wird geladen …</p></section> : snapshot && <>
         {view === "training" && <section className="card">
           <div className="section-heading"><div><p className="eyebrow">AB AUF DEN PLATZ</p><h2>Wer ist dabei?</h2></div>
-            <div className="date-field"><label htmlFor="training-date">Trainingsdatum</label><input id="training-date" type="date" min="2000-01-01" max="2100-12-31" required value={date} disabled={busy} onChange={(event) => chooseDate(event.target.value)} /></div>
+            <TrainingDatePicker value={date} trainingDates={snapshot.history.map((entry) => entry.date)} disabled={busy || needsReload} onChange={chooseDate} />
           </div>
           {!training ? <div className="empty">
             <div className="empty-icon" aria-hidden="true">+</div><h3>Noch kein Training an diesem Tag</h3>

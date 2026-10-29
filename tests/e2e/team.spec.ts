@@ -29,13 +29,13 @@ for (const setup of [
     }
 
     await page.getByRole("button", { name: "Training", exact: true }).click();
-    await page.getByLabel("Trainingsdatum").fill(setup.date);
+    await page.getByLabel("Trainingsdatum", { exact: true }).fill(setup.date);
     await page.getByRole("button", { name: "Training anlegen" }).click();
     const first = page.getByRole("checkbox", { name: `${setup.first}: anwesend`, exact: true });
     await first.click();
     await expect(page.getByRole("status")).toContainText("Anwesenheit gespeichert");
     await page.reload();
-    await page.getByLabel("Trainingsdatum").fill(setup.date);
+    await page.getByLabel("Trainingsdatum", { exact: true }).fill(setup.date);
     await expect(first).toBeChecked();
     await first.click();
     await expect(page.getByRole("status")).toContainText("Anwesenheit gespeichert");
@@ -61,6 +61,7 @@ for (const setup of [
     });
     await first.click();
     await expect(first).toHaveAttribute("aria-disabled", "true");
+    await expect(page.getByRole("button", { name: "Kalender", exact: true })).toBeDisabled();
     await expect(first).not.toBeChecked({ timeout: 500 });
     await expect(page.getByRole("status")).toContainText("Wird gespeichert");
     const second = page.getByRole("checkbox", { name: `${setup.second}: anwesend`, exact: true });
@@ -114,7 +115,7 @@ for (const setup of [
     await expect(page.getByRole("checkbox", { name: `${lateName}: anwesend`, exact: true })).not.toBeChecked();
     await expect(first).toBeChecked();
     await page.reload();
-    await page.getByLabel("Trainingsdatum").fill(setup.date);
+    await page.getByLabel("Trainingsdatum", { exact: true }).fill(setup.date);
     await expect(page.getByRole("checkbox", { name: `${lateName}: anwesend`, exact: true })).toBeVisible();
     await expect(page.getByRole("checkbox", { name: `${lateName}: anwesend`, exact: true })).not.toBeChecked();
     await expect(first).toBeChecked();
@@ -130,7 +131,7 @@ for (const setup of [
     await page.getByRole("button", { name: "Training", exact: true }).click();
     await expect(first).toBeVisible();
     await expect(page.getByText("Archiviert", { exact: true })).toBeVisible();
-    await page.getByLabel("Trainingsdatum").fill(setup.next);
+    await page.getByLabel("Trainingsdatum", { exact: true }).fill(setup.next);
     await page.getByRole("button", { name: "Training anlegen" }).click();
     await expect(first).toHaveCount(0);
     await page.getByRole("button", { name: "Verlauf", exact: true }).click();

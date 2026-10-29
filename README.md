@@ -30,6 +30,8 @@ Beim Anlegen eines Trainings werden die zu diesem Zeitpunkt aktiven Kinder aufge
 
 ## Wer war wann dabei?
 
+Unter „Trainingsdatum“ öffnet „Kalender“ eine Monatsansicht. Ein Punkt markiert bereits angelegte Trainings, auch zukünftige. Der heutige Tag ist umrahmt und die Auswahl farbig hinterlegt. Monat und Jahr lassen sich direkt wechseln; alternativ bleibt die direkte Datumseingabe verfügbar. Auch freie Tage sind auswählbar: Erst „Training anlegen“ erstellt einen Termin. Der Kalender lässt sich mit Pfeiltasten, Home/End und PageUp/PageDown bedienen und mit Escape schließen.
+
 Im Reiter **Verlauf** ist der aktuelle Monat (Europe/Berlin) vorausgewählt. Über die Monatsauswahl oder Vor/Zurück lässt sich zwischen Januar 2000 und Dezember 2100 navigieren. Der gewählte Monat bleibt beim Wechsel zu einem Training und zurück erhalten; nach Neuladen ist wieder der aktuelle Monat eingestellt.
 
 - **Tabelle** (Standard): Kinder als Zeilen, angelegte Trainingstage als Spalten. `✓` bedeutet anwesend, `×` nicht anwesend und `—` nicht in der damaligen Teilnehmerliste. Nicht abgehakt heißt nicht automatisch entschuldigt oder abgesagt. Auf dem Handy ist die Tabelle horizontal scrollbar, die Namensspalte bleibt stehen.
