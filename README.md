@@ -21,11 +21,22 @@ Eine kleine, deutschsprachige Web-App für die Trainingsanwesenheit einer G-Juge
 - Einzelne Kinder abhaken: Jede Änderung wird sofort gespeichert.
 - Falsch gesetzte Häkchen erneut antippen oder die letzte erfolgreiche Änderung im geöffneten Training rückgängig machen.
 - Trainingsverlauf ansehen und nachträglich bearbeiten.
+- Monatsübersicht im Verlauf: Tabelle und Tagesliste mit anwesenden Vornamen.
 - Sichtbare Speicher-/Verbindungsfehler und Versionsschutz gegen das Überschreiben paralleler Änderungen.
 
 Die Teamansicht lädt Training, Kinder und Verlauf in einer einzigen Serveranfrage und einer gemeinsamen Datenbankabfrage. Häkchen reagieren sofort; „Wird gespeichert …“ kennzeichnet noch nicht bestätigte Änderungen. Während ein Kind gespeichert wird, können andere Kinder bereits abgehakt werden. Nur weitere Änderungen am selben Kind warten auf die Bestätigung, damit keine Schreibvorgänge vertauscht werden. Datumwechsel, Verwaltung und Abmelden warten auf ausstehende Speicherungen.
 
-Beim Anlegen eines Trainings werden die zu diesem Zeitpunkt aktiven Kinder aufgenommen. Später hinzugefügte Kinder erscheinen erst in neuen Trainings. Archivierte Kinder bleiben in bestehenden Trainings sichtbar. Umbenennungen gelten auch für frühere Listen. Gleichlautende Vornamen sind getrennte Datensätze; zur Unterscheidung kann ein kurzer Zusatz verwendet werden.
+Beim Anlegen eines Trainings werden die zu diesem Zeitpunkt aktiven Kinder aufgenommen. Neu hinzugefügte Kinder werden zusätzlich in allen bereits angelegten Trainings ergänzt, auch in vergangenen und zukünftigen Terminen, zunächst als nicht anwesend. Das Hinzufügen und die Teilnahmezuordnungen werden atomar gespeichert; vorhandene Häkchen bleiben unverändert. Damit erhöhen sich die Teilnehmerzahlen der bisherigen Trainings. Bereits vor dieser Änderung vorhandene fehlende Zuordnungen werden nicht nachträglich aufgefüllt. Archivierte Kinder bleiben in bestehenden Trainings sichtbar und fehlen in neu angelegten Trainings; Reaktivieren allein ergänzt keine fehlenden Zuordnungen. Umbenennungen gelten auch für frühere Listen. Gleichlautende Vornamen sind getrennte Datensätze; zur Unterscheidung kann ein kurzer Zusatz verwendet werden.
+
+## Wer war wann dabei?
+
+Im Reiter **Verlauf** ist der aktuelle Monat (Europe/Berlin) vorausgewählt. Über die Monatsauswahl oder Vor/Zurück lässt sich zwischen Januar 2000 und Dezember 2100 navigieren. Der gewählte Monat bleibt beim Wechsel zu einem Training und zurück erhalten; nach Neuladen ist wieder der aktuelle Monat eingestellt.
+
+- **Tabelle** (Standard): Kinder als Zeilen, angelegte Trainingstage als Spalten. `✓` bedeutet anwesend, `×` nicht anwesend und `—` nicht in der damaligen Teilnehmerliste. Nicht abgehakt heißt nicht automatisch entschuldigt oder abgesagt. Auf dem Handy ist die Tabelle horizontal scrollbar, die Namensspalte bleibt stehen.
+- **Tagesliste**: Datum, Anwesenheitszahl und anwesende Vornamen je Training. Ohne Häkchen erscheint „Niemand anwesend“.
+- Archivierte Kinder bleiben mit Kennzeichnung sichtbar. Kinder ohne Teilnahmezuordnung zu irgendeinem Training dieses Monats erscheinen nicht als leere Tabellenzeile. Gelöschte Kinder bleiben entfernt; umbenannte Kinder erscheinen auch hier unter ihrem aktuellen Vornamen.
+- Die Übersicht ist ausschließlich lesend. Über das Datum in der Tabelle oder „Training öffnen“ gelangt man zur vorhandenen Trainingsbearbeitung.
+- Die Monatsdaten werden erst beim Öffnen des Verlaufs mit einer gemeinsamen Datenbankabfrage geladen. Der Ansichtswechsel benötigt keine weitere Anfrage. Nach einer Korrektur lädt das erneute Öffnen des Verlaufs den gespeicherten Stand; „Aktualisieren“ liest Änderungen anderer Geräte ein.
 
 ## Technik
 

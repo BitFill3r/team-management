@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { api, displayDate, errorMessage, today } from "@/lib/client";
 import type { Child, Participant, Snapshot, Training } from "@/lib/types";
 import { dateSchema } from "@/lib/validation";
+import AttendanceOverview from "./attendance-overview";
 
 type View = "training" | "history" | "admin";
 type Undo = { childId: string; present: boolean; version: number };
@@ -14,6 +15,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [view, setView] = useState<View>("training");
   const [date, setDate] = useState(today);
+  const [overviewMonth, setOverviewMonth] = useState(() => today().slice(0, 7));
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -170,19 +172,23 @@ export default function Dashboard() {
             }}>Letzte Änderung rückgängig</button></div>
           </>}
         </section>}
-        {view === "history" && <section className="card">
-          <div className="section-heading"><div><p className="eyebrow">UNSERE TRAININGSTAGE</p><h2>Trainingsverlauf</h2></div><button className="secondary" disabled={busy} onClick={reload}>Aktualisieren</button></div>
-          <p className="muted">Öffne einen Trainingstag, um die Anwesenheit anzusehen oder zu korrigieren.</p>
-          {snapshot.history.length === 0 ? <p className="empty">Noch keine Trainings gespeichert.</p> : <ul className="history-list">{snapshot.history.map((entry) =>
-            <li key={entry.id}><button className="history-entry" disabled={busy} onClick={() => chooseDate(entry.date)}><strong>{displayDate(entry.date)}</strong><span>{entry.present} / {entry.total} dabei <span aria-hidden="true">→</span></span></button></li>)}</ul>}
-        </section>}
+        {view === "history" && <AttendanceOverview month={overviewMonth} onMonthChange={setOverviewMonth} onOpenTraining={chooseDate} />}
         {view === "admin" && <section className="card">
           <div className="section-heading"><div><p className="eyebrow">DAS SIND WIR</p><h2>Kinder verwalten</h2></div><span className="pill">{snapshot.children.filter((child) => !child.archived).length} aktiv</span></div>
-          <p className="muted">Nur Vornamen, keine weiteren Kinderdaten. Änderungen an der aktiven Liste gelten für neu angelegte Trainings.</p>
+          <p className="muted">Nur Vornamen, keine weiteren Kinderdaten. Neue Kinder werden auch in allen bereits angelegten Trainings ergänzt, zunächst als nicht anwesend.</p>
           <AddChild disabled={disabled} onAdd={async (name) => {
             return mutate(async () => {
               const child = await api<Child>("children", "POST", { name });
-              setSnapshot((previous) => previous ? { ...previous, children: [...previous.children, child] } : previous);
+              setSnapshot((previous) => previous ? {
+                ...previous,
+                children: [...previous.children, child],
+                training: previous.training ? {
+                  ...previous.training,
+                  participants: [...previous.training.participants, { ...child, present: false, attendanceVersion: 0 }]
+                    .sort((a, b) => a.name.localeCompare(b.name, "de") || a.id.localeCompare(b.id)),
+                } : null,
+                history: previous.history.map((entry) => ({ ...entry, total: entry.total + 1 })),
+              } : previous);
             }, "Kind hinzugefügt.");
           }} />
           {snapshot.children.length === 0 && <p className="empty">Noch keine Kinder eingetragen. Mit dem ersten Vornamen geht es los.</p>}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { authenticated, createSession, SESSION_COOKIE, SESSION_SECONDS, verifyPassword } from "@/lib/auth";
 import * as store from "@/lib/store";
-import { attendanceSchema, childCreateSchema, childDeleteSchema, childUpdateSchema, dateSchema } from "@/lib/validation";
+import { attendanceSchema, childCreateSchema, childDeleteSchema, childUpdateSchema, dateSchema, monthSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,6 +27,7 @@ async function handle(request: NextRequest, context: Context) {
       return response;
     }
     if (!(await authenticated())) throw new store.HttpError(401, "Bitte erneut anmelden.");
+    if (path === "overview" && method === "GET") return NextResponse.json(await store.getMonthlyOverview(monthSchema.parse(request.nextUrl.searchParams.get("month"))));
     if (path === "dashboard" && method === "GET") return NextResponse.json(await store.getSnapshot(dateSchema.parse(request.nextUrl.searchParams.get("date"))));
     if (path === "logout" && method === "POST") {
       const response = NextResponse.json({ ok: true });

@@ -1,5 +1,5 @@
 import { db } from "./db";
-import type { Child, HistoryEntry, Snapshot, Training } from "./types";
+import type { Child, HistoryEntry, MonthlyOverview, OverviewTraining, Snapshot, Training } from "./types";
 
 export class HttpError extends Error {
   constructor(public status: number, message: string) { super(message); }
@@ -39,7 +39,14 @@ export async function listChildren() {
 }
 
 export async function createChild(name: string) {
-  const result = await db().query<Child>("INSERT INTO children (name) VALUES ($1) RETURNING id, name, archived, version", [name]);
+  const result = await db().query<Child>(`
+    WITH created AS (
+      INSERT INTO children (name) VALUES ($1) RETURNING id, name, archived, version
+    ), participants AS (
+      INSERT INTO attendance (training_id, child_id)
+      SELECT trainings.id, created.id FROM trainings CROSS JOIN created
+    )
+    SELECT id, name, archived, version FROM created`, [name]);
   return result.rows[0];
 }
 
@@ -88,6 +95,22 @@ export async function setAttendance(input: { trainingId: string; childId: string
 export async function history() {
   const result = await db().query<HistoryEntry>(historyQuery);
   return result.rows;
+}
+
+export async function getMonthlyOverview(month: string): Promise<MonthlyOverview> {
+  const result = await db().query<OverviewTraining>(`
+    SELECT t.id, to_char(t.date, 'YYYY-MM-DD') AS date,
+      COALESCE((
+        SELECT json_agg(p) FROM (
+          SELECT c.id, c.name, c.archived, a.present
+          FROM attendance a JOIN children c ON c.id=a.child_id
+          WHERE a.training_id=t.id ORDER BY lower(c.name), c.created_at, c.id
+        ) p
+      ), '[]'::json) AS participants
+    FROM trainings t
+    WHERE t.date >= $1::date AND t.date < $1::date + interval '1 month'
+    ORDER BY t.date`, [`${month}-01`]);
+  return { month, trainings: result.rows };
 }
 
 export async function claimLoginAttempt() {

@@ -19,7 +19,7 @@ vi.mock("next/headers", () => ({ cookies: async () => ({ get: () => state.cookie
 
 import * as store from "@/lib/store";
 import { createSession, SESSION_SECONDS, validSession, verifyPassword } from "@/lib/auth";
-import { attendanceSchema, dateSchema, nameSchema } from "@/lib/validation";
+import { attendanceSchema, dateSchema, nameSchema, monthSchema } from "@/lib/validation";
 import { today } from "@/lib/client";
 import { GET, POST, PATCH, DELETE } from "@/app/api/[...path]/route";
 
@@ -49,6 +49,12 @@ function request(path: string, method = "GET", data?: unknown, origin = "http://
 }
 
 describe("Eingaben", () => {
+  it("prüft Monate und Grenzen", () => {
+    for (const month of ["1999-12", "2101-01", "2026-00", "2026-13", "2026-1", "2026-01-01", ""]) {
+      expect(monthSchema.safeParse(month).success).toBe(false);
+    }
+    for (const month of ["2000-01", "2100-12", "2028-02"]) expect(monthSchema.parse(month)).toBe(month);
+  });
   it("prüft echte Kalenderdaten, Jahresgrenzen und Schaltjahre", () => {
     for (const date of ["2026-02-29", "2026-02-30", "2026-13-01", "1999-12-31", "2101-01-01", "abc"]) {
       expect(dateSchema.safeParse(date).success).toBe(false);
@@ -104,6 +110,78 @@ describe("Zugang", () => {
 });
 
 describe("Persistenz und Historie", () => {
+  it("ergänzt ein neues Kind in jedem bestehenden Termin, ohne Häkchen oder Versionen zu ändern", async () => {
+    const existing = await store.createChild("Emil");
+    const dates = ["2025-01-03", "2026-10-29", "2027-12-01"];
+    for (const date of dates) {
+      const training = (await store.createTraining(date))!;
+      await store.setAttendance({ trainingId: training.id, childId: existing.id, present: true, version: 0 });
+    }
+    const added = await store.createChild("Mila");
+    for (const date of dates) {
+      const training = (await store.getTraining(date))!;
+      expect(training.participants).toHaveLength(2);
+      expect(training.participants.find((child) => child.id === added.id)).toMatchObject({ present: false, attendanceVersion: 0 });
+      expect(training.participants.find((child) => child.id === existing.id)).toMatchObject({ present: true, attendanceVersion: 1 });
+    }
+    expect(await store.history()).toEqual(expect.arrayContaining(dates.map((date) => expect.objectContaining({ date, total: 2, present: 1 }))));
+  });
+  it("speichert bei fehlgeschlagenen Teilnahmezuordnungen auch kein halbfertiges Kind", async () => {
+    await store.createTraining("2026-10-29");
+    await database.exec(`
+      CREATE FUNCTION reject_test_attendance() RETURNS trigger LANGUAGE plpgsql AS $$
+        BEGIN RAISE EXCEPTION 'Test: Zuordnung fehlgeschlagen'; END;
+      $$;
+      CREATE TRIGGER reject_test_attendance BEFORE INSERT ON attendance
+        FOR EACH ROW EXECUTE FUNCTION reject_test_attendance();
+    `);
+    try {
+      await expect(store.createChild("Mila")).rejects.toThrow("Test: Zuordnung fehlgeschlagen");
+      expect(await store.listChildren()).toEqual([]);
+      expect((await store.getTraining("2026-10-29"))?.participants).toEqual([]);
+    } finally {
+      await database.exec("DROP TRIGGER reject_test_attendance ON attendance; DROP FUNCTION reject_test_attendance()");
+    }
+  });
+  it("lädt Monatsdaten mit genau einer Abfrage und schlanken Teilnehmerdaten", async () => {
+    expect(await store.getMonthlyOverview("2026-10")).toEqual({ month: "2026-10", trainings: [] });
+    const first = await store.createChild("Emil");
+    const training = (await store.createTraining("2026-10-29"))!;
+    const second = await store.createChild("Emil");
+    await store.setAttendance({ trainingId: training.id, childId: first.id, version: 0, present: true });
+    await store.createTraining("2026-10-30");
+    await store.createTraining("2026-11-01");
+    await store.updateChild({ ...first, archived: true });
+    const before = state.queries;
+    const result = await store.getMonthlyOverview("2026-10");
+    expect(state.queries - before).toBe(1);
+    expect(result.trainings.map((day) => day.date)).toEqual(["2026-10-29", "2026-10-30"]);
+    expect(result.trainings[0]).toEqual({
+      id: training.id, date: training.date,
+      participants: expect.arrayContaining([
+        { id: first.id, name: "Emil", archived: true, present: true },
+        { id: second.id, name: "Emil", archived: false, present: false },
+      ]),
+    });
+    expect(result.trainings[1].participants).toHaveLength(2);
+    expect(result.trainings[1].participants.find((child) => child.id === second.id)).toEqual({
+      id: second.id, name: "Emil", archived: false, present: false,
+    });
+    await store.deleteChild(first.id, 1);
+    expect((await store.getMonthlyOverview("2026-10")).trainings[0].participants).toEqual([
+      { id: second.id, name: "Emil", archived: false, present: false },
+    ]);
+    expect((await store.getMonthlyOverview("2026-10")).trainings[1].participants).toHaveLength(1);
+  });
+  it("grenzt Monate über Jahreswechsel und Schaltjahre exakt ab", async () => {
+    for (const date of ["2027-12-31", "2028-01-01", "2028-01-31", "2028-02-01", "2028-02-29", "2028-03-01", "2100-12-31"]) {
+      await store.createTraining(date);
+    }
+    expect((await store.getMonthlyOverview("2028-01")).trainings.map((day) => day.date)).toEqual(["2028-01-01", "2028-01-31"]);
+    expect((await store.getMonthlyOverview("2028-02")).trainings.map((day) => day.date)).toEqual(["2028-02-01", "2028-02-29"]);
+    expect((await store.getMonthlyOverview("2027-12")).trainings.map((day) => day.date)).toEqual(["2027-12-31"]);
+    expect((await store.getMonthlyOverview("2100-12")).trainings.map((day) => day.date)).toEqual(["2100-12-31"]);
+  });
   it("lädt Training, Kinder und Verlauf als einen konsistenten Datenstand", async () => {
     expect(await store.getSnapshot("2026-10-29")).toEqual({ training: null, children: [], history: [] });
     const child = await store.createChild("Emil");
@@ -140,14 +218,15 @@ describe("Persistenz und Historie", () => {
     await expect(store.setAttendance({ trainingId: training.id, childId: child.id, present: false, version: 1 })).rejects.toMatchObject({ status: 409 });
     expect((await store.getTraining(training.date))?.participants[0].present).toBe(true);
   });
-  it("erstellt Teilnehmer-Snapshots und erhält archivierte Kinder in alten Trainings", async () => {
+  it("ergänzt neue Kinder auch in bestehenden Trainings und erhält archivierte Kinder", async () => {
     const child = await store.createChild("Emil");
     await store.createTraining("2026-10-29");
     const archived = await store.updateChild({ ...child, archived: true });
     const newer = (await store.createTraining("2026-10-30"))!;
     expect(newer.participants).toHaveLength(0);
     await store.createChild("Mila");
-    expect((await store.getTraining("2026-10-29"))?.participants).toHaveLength(1);
+    expect((await store.getTraining("2026-10-29"))?.participants).toHaveLength(2);
+    expect((await store.getTraining("2026-10-30"))?.participants).toHaveLength(1);
     expect((await store.getTraining("2026-10-29"))?.participants[0].archived).toBe(true);
     await store.updateChild({ ...archived, name: "Emilio", archived: false });
     expect((await store.getTraining("2026-10-29"))?.participants[0].name).toBe("Emilio");
@@ -187,6 +266,7 @@ describe("HTTP-Schnittstelle", () => {
       ["training?date=2026-10-29", "GET", undefined], ["training", "POST", {}],
       ["attendance", "PATCH", {}], ["history", "GET", undefined],
       ["dashboard?date=2026-10-29", "GET", undefined],
+      ["overview?month=2026-10", "GET", undefined],
     ] as const) {
       const response = await request(path, method, data);
       expect(response.status).toBe(401);
@@ -207,6 +287,11 @@ describe("HTTP-Schnittstelle", () => {
   });
   it("verhindert fremde Origins und ungültige Daten", async () => {
     state.cookie = createSession();
+    for (const path of ["overview", "overview?month=2026-13", "overview?month=1999-12"]) expect((await request(path)).status).toBe(400);
+    const overview = await request("overview?month=2026-10");
+    expect(overview.status).toBe(200);
+    expect(overview.headers.get("cache-control")).toBe("no-store");
+    expect(await overview.json()).toEqual({ month: "2026-10", trainings: [] });
     expect((await request("children", "POST", { name: "Emil" }, "https://foreign.example")).status).toBe(403);
     expect((await request("children", "POST", { name: " " })).status).toBe(400);
     expect((await request("training?date=2026-02-30")).status).toBe(400);
