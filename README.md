@@ -2,6 +2,16 @@
 
 Eine kleine, deutschsprachige Web-App für die Trainingsanwesenheit einer G-Jugend. Optimiert für Handy und Computer, mit gemeinsamer Online-Speicherung und einem Team-Passwort.
 
+## Aktuelles Deployment
+
+- App: https://am-ball-team-management.netlify.app
+- Netlify-Projekt: https://app.netlify.com/projects/am-ball-team-management/
+- GitHub: https://github.com/BitFill3r/team-management, Produktionsbranch `main` mit automatischen Netlify-Deployments.
+- Datenbank: Neon-Projekt `team-management`, AWS Frankfurt. Die Netlify-Funktionen laufen derzeit in der voreingestellten Region US East (Ohio); die EU-Datenbankregion bedeutet daher keine ausschließlich europäische Verarbeitung.
+- Die vier App-Variablen sind ausschließlich für den Produktionskontext gesetzt, nicht für Branch-Deployments oder Deploy Previews.
+- Im aktuellen Netlify-Tarif werden reguläre Server-Umgebungsvariablen verwendet. Diese sind für berechtigte Netlify-Administratoren lesbar und gelten für die standardmäßig verfügbaren Scopes einschließlich Build und Funktionen. Sie sind keine öffentlichen `NEXT_PUBLIC_`-Variablen. Zugriff auf Team, Builds und Deploy-Konfiguration deshalb einschränken.
+- Die produktive Anmeldung, Datenabrufe, sicheren Sitzungscookies und Abmeldung wurden über HTTPS geprüft, ohne Kinder oder Trainingsdaten anzulegen.
+
 ## Funktionen
 
 - Ein gemeinsamer Zugang für Anwesenheit **und** Verwaltung, keine getrennten Rollen.
@@ -55,7 +65,7 @@ Die Anwendung ist unter `http://localhost:3000` erreichbar. Bei einem lokalen Po
 1. In Neon ein Projekt mit einer **EU-Region** anlegen. Eine eigene Datenbank für diese App verwenden. Die gepoolte Verbindungsadresse kopieren und TLS-Zertifikatsprüfung aktiv lassen. Zugang nur für die verantwortlichen Personen freigeben.
 2. Lokal `.env.local` mit dieser Datenbank und den erzeugten Geheimnissen füllen. `npm run db:migrate` ausführen. Das legt das Schema an, keine Kinderdaten. Vor späteren Migrationen eine Sicherung erstellen.
 3. Das Repository zu GitHub übertragen und in Netlify als neues Projekt importieren. Next.js wird durch Netlifys integrierte Next.js-Unterstützung erkannt; kein statischer Export. Build-Befehl und Ausgabe sind in [netlify.toml](./netlify.toml) gesetzt.
-4. `DATABASE_URL`, `TEAM_PASSWORD_HASH` und `SESSION_SECRET` in Netlify als geheime Umgebungsvariablen für den **Functions-/Server-Kontext** des Produktionsdeployments setzen. `APP_ORIGIN` auf die exakte öffentliche HTTPS-Adresse ohne abschließenden Schrägstrich setzen. Bei einer eigenen Domain diese als kanonische Adresse verwenden und andere Adressen dorthin umleiten. Keine produktiven Geheimnisse/Datenbanken für öffentliche Vorschau-Deployments freigeben. Falls Variablen auch beim Build gesetzt werden, dürfen sie nicht als öffentliche Next.js-Variablen markiert sein.
+4. `DATABASE_URL`, `TEAM_PASSWORD_HASH` und `SESSION_SECRET` in Netlify als Server-Umgebungsvariablen für das Produktionsdeployment setzen. Falls der Tarif granulare Scopes und gegen Auslesen geschützte Secrets unterstützt, diese auf den Functions-/Server-Kontext begrenzen und als Secrets markieren; ansonsten bleiben reguläre Variablen für berechtigte Administratoren lesbar. `APP_ORIGIN` auf die exakte öffentliche HTTPS-Adresse ohne abschließenden Schrägstrich setzen. Bei einer eigenen Domain diese als kanonische Adresse verwenden und andere Adressen dorthin umleiten. Keine produktiven Geheimnisse/Datenbanken für öffentliche Vorschau-Deployments freigeben. Falls Variablen auch beim Build gesetzt werden, dürfen sie nicht als öffentliche Next.js-Variablen markiert sein.
 5. Deployment starten. Die dynamischen Seiten und API benötigen Netlifys Next.js-Runtime; ein reines Uploaden statischer Dateien funktioniert nicht.
 6. Über die HTTPS-Adresse prüfen: Anmeldung, Vornamen anlegen, Datum wählen, Training anlegen, abhaken, Seite neu laden, Rückgängig, Verlauf und Abmelden. Von einem zweiten Gerät denselben Stand prüfen. Erst danach echte Daten eintragen.
 
