@@ -1,0 +1,11 @@
+node_modules/
+.next/
+.netlify/
+.env*
+!.env.example
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+.neon
+.team-password.local

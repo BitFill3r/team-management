@@ -1,0 +1,123 @@
+import { expect, test } from "@playwright/test";
+import type { Training } from "../../src/lib/types";
+
+for (const setup of [
+  { label: "Desktop", width: 1280, height: 900, first: "Emil", second: "Mila", date: "2026-10-29", next: "2026-11-02" },
+  { label: "Handy", width: 390, height: 844, first: "Jonas", second: "Ben", date: "2026-10-30", next: "2026-11-03" },
+]) {
+  test(`${setup.label}: Team pflegen, Anwesenheit speichern und Fehler korrigieren`, async ({ page }) => {
+    await page.setViewportSize({ width: setup.width, height: setup.height });
+    await page.goto("/");
+    await expect(page).toHaveURL(/\/login$/);
+    await page.getByLabel("Team-Passwort").fill("wrong");
+    await page.getByRole("button", { name: "Zum Training" }).click();
+    await expect(page.locator(".error[role=alert]")).toContainText("nicht richtig");
+    await page.getByLabel("Team-Passwort").fill("browser-test-password");
+    await page.getByRole("button", { name: "Zum Training" }).click();
+    await expect(page.getByRole("heading", { name: "Wer ist dabei?" })).toBeVisible();
+    await page.getByRole("button", { name: "Kinder verwalten", exact: true }).click();
+    for (const name of [setup.first, setup.second]) {
+      await page.getByLabel("Neuer Vorname").fill(name);
+      await page.getByRole("button", { name: "Kind hinzufügen" }).click();
+      await expect(page.getByLabel("Neuer Vorname")).toHaveValue("");
+      await expect(page.getByRole("status")).toContainText("Kind hinzugefügt");
+    }
+    await page.getByRole("button", { name: "Training", exact: true }).click();
+    await page.getByLabel("Trainingsdatum").fill(setup.date);
+    await page.getByRole("button", { name: "Training anlegen" }).click();
+    const first = page.getByRole("checkbox", { name: `${setup.first}: anwesend`, exact: true });
+    await first.click();
+    await expect(page.getByRole("status")).toContainText("Anwesenheit gespeichert");
+    await page.reload();
+    await page.getByLabel("Trainingsdatum").fill(setup.date);
+    await expect(first).toBeChecked();
+    await first.click();
+    await expect(page.getByRole("status")).toContainText("Anwesenheit gespeichert");
+    await page.getByRole("button", { name: "Letzte Änderung rückgängig" }).click();
+    await expect(first).toBeChecked();
+    await expect(page.getByRole("status")).toContainText("rückgängig gemacht");
+    await first.focus();
+    await page.keyboard.press("Space");
+    await expect(first).not.toBeChecked();
+    await expect(first).toHaveAttribute("aria-disabled", "false");
+    await expect(first).toBeFocused();
+    await page.keyboard.press("Space");
+    await expect(first).toBeChecked();
+    await expect(first).toHaveAttribute("aria-disabled", "false");
+
+    let release = () => {};
+    let writes = 0;
+    const pending = new Promise<void>((resolve) => { release = resolve; });
+    await page.route("**/api/attendance", async (route) => {
+      writes++;
+      await pending;
+      await route.continue();
+    });
+    await first.click();
+    await expect(first).toHaveAttribute("aria-disabled", "true");
+    await first.dispatchEvent("click");
+    release();
+    await expect(first).toHaveAttribute("aria-disabled", "false");
+    await expect(first).not.toBeChecked();
+    expect(writes).toBe(1);
+    await page.unroute("**/api/attendance");
+    await first.click();
+    await expect(first).toBeChecked();
+    await expect(first).toHaveAttribute("aria-disabled", "false");
+
+    await page.route("**/api/attendance", (route) => route.abort(), { times: 1 });
+    await first.click();
+    await expect(page.locator(".error[role=alert]")).toContainText("Verbindung");
+    await expect(first).toBeChecked();
+    await expect(first).toBeDisabled();
+    await page.getByRole("button", { name: "Gespeicherten Stand neu laden" }).click();
+    await expect(first).toBeEnabled();
+    await expect(first).toBeChecked();
+
+    const training: Training = await (await page.request.get(`/api/training?date=${setup.date}`)).json();
+    const participant = training.participants.find((child) => child.name === setup.first)!;
+    const concurrent = await page.request.patch("/api/attendance", {
+      headers: { origin: "http://127.0.0.1:3100" },
+      data: { trainingId: training.id, childId: participant.id, present: true, version: participant.attendanceVersion },
+    });
+    expect(concurrent.ok()).toBe(true);
+    await first.click();
+    await expect(page.locator(".error[role=alert]")).toContainText("inzwischen geändert");
+    await page.getByRole("button", { name: "Gespeicherten Stand neu laden" }).click();
+    await expect(first).toBeChecked();
+    await expect(first).toBeEnabled();
+    await expect(page.locator("body")).toHaveJSProperty("scrollWidth", setup.width);
+    await page.screenshot({ path: `test-results/${setup.label.toLowerCase()}-training.png`, fullPage: true });
+
+    await page.getByRole("button", { name: "Kinder verwalten", exact: true }).click();
+    const childRow = page.locator(".child-editor").filter({ has: page.locator(`input[value="${setup.first}"]`) });
+    await childRow.getByRole("button", { name: "Archivieren", exact: true }).click();
+    await expect(childRow.getByRole("button", { name: "Reaktivieren" })).toBeVisible();
+    await page.getByRole("button", { name: "Training", exact: true }).click();
+    await expect(first).toBeVisible();
+    await expect(page.getByText("Archiviert", { exact: true })).toBeVisible();
+    await page.getByLabel("Trainingsdatum").fill(setup.next);
+    await page.getByRole("button", { name: "Training anlegen" }).click();
+    await expect(first).toHaveCount(0);
+    await page.getByRole("button", { name: "Verlauf", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Trainingsverlauf" })).toBeVisible();
+    await page.locator(".history-entry").filter({ hasText: setup.date === "2026-10-29" ? "29.10.2026" : "30.10.2026" }).click();
+    await expect(first).toBeChecked();
+
+    await page.getByRole("button", { name: "Kinder verwalten", exact: true }).click();
+    await childRow.getByRole("button", { name: "Reaktivieren" }).click();
+    await expect(childRow.getByRole("button", { name: "Archivieren", exact: true })).toBeVisible();
+    const secondRow = page.locator(".child-editor").filter({ has: page.locator(`input[value="${setup.second}"]`) });
+    await secondRow.getByRole("button", { name: "Löschen", exact: true }).click();
+    await secondRow.getByRole("button", { name: "Abbrechen" }).click();
+    await expect(secondRow).toBeVisible();
+    await secondRow.getByRole("button", { name: "Löschen", exact: true }).click();
+    await secondRow.getByRole("button", { name: "Ja, endgültig löschen" }).click();
+    await expect(secondRow).toHaveCount(0);
+    await page.getByRole("button", { name: "Training", exact: true }).click();
+    await expect(page.getByRole("checkbox", { name: `${setup.second}: anwesend`, exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "Abmelden", exact: true }).click();
+    await expect(page).toHaveURL(/\/login$/);
+    expect((await page.request.get("/api/children")).status()).toBe(401);
+  });
+}
