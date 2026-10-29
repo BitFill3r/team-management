@@ -1,8 +1,9 @@
 import { readdir, readFile } from "node:fs/promises";
 import pg from "pg";
 
-if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL fehlt.");
-const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
+if (!connectionString) throw new Error("DATABASE_URL_UNPOOLED oder DATABASE_URL fehlt.");
+const client = new pg.Client({ connectionString });
 await client.connect();
 try {
   await client.query("BEGIN");

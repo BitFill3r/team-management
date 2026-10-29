@@ -110,6 +110,45 @@ describe("Zugang", () => {
 });
 
 describe("Persistenz und Historie", () => {
+  it("trägt alte Lücken aktiver Kinder nach, erhält vorhandene Werte und ist wiederholbar", async () => {
+    const active = await store.createChild("Emil");
+    const archived = await store.createChild("Mila");
+    const first = (await store.createTraining("2026-10-29"))!;
+    const second = (await store.createTraining("2026-10-30"))!;
+    const empty = (await store.createTraining("2026-11-01"))!;
+    await store.updateChild({ ...archived, archived: true });
+    await database.query("UPDATE attendance SET present=true, version=7 WHERE training_id=$1 AND child_id=$2", [first.id, active.id]);
+    await database.query("UPDATE attendance SET version=4 WHERE training_id=$1 AND child_id=$2", [first.id, archived.id]);
+    await database.query("DELETE FROM attendance WHERE training_id=$1 OR training_id=$2", [second.id, empty.id]);
+    const before = (await database.query("SELECT * FROM attendance ORDER BY training_id, child_id")).rows;
+    const migration = await readFile(new URL("../migrations/002_backfill_active_children.sql", import.meta.url), "utf8");
+    await database.exec(migration);
+    for (const training of [second, empty]) {
+      expect((await store.getTraining(training.date))?.participants).toEqual([
+        { ...active, present: false, attendanceVersion: 0 },
+      ]);
+    }
+    const after = (await database.query("SELECT * FROM attendance ORDER BY training_id, child_id")).rows;
+    expect(after).toHaveLength(before.length + 2);
+    expect(after).toEqual(expect.arrayContaining(before));
+    expect((await store.history()).find((day) => day.id === first.id)).toMatchObject({ total: 2, present: 1 });
+    expect((await store.getMonthlyOverview("2026-10")).trainings[1].participants).toEqual([
+      { id: active.id, name: active.name, archived: false, present: false },
+    ]);
+    await database.exec(migration);
+    expect((await database.query("SELECT * FROM attendance ORDER BY training_id, child_id")).rows).toEqual(after);
+  });
+  it("führt das Nachtragen auch ohne Kinder oder Trainings sicher aus", async () => {
+    const migration = await readFile(new URL("../migrations/002_backfill_active_children.sql", import.meta.url), "utf8");
+    await database.exec(migration);
+    await store.createChild("Emil");
+    await database.exec(migration);
+    expect((await database.query("SELECT * FROM attendance")).rows).toEqual([]);
+    await database.exec("DELETE FROM children");
+    await store.createTraining("2026-10-29");
+    await database.exec(migration);
+    expect((await database.query("SELECT * FROM attendance")).rows).toEqual([]);
+  });
   it("ergänzt ein neues Kind in jedem bestehenden Termin, ohne Häkchen oder Versionen zu ändern", async () => {
     const existing = await store.createChild("Emil");
     const dates = ["2025-01-03", "2026-10-29", "2027-12-01"];

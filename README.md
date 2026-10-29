@@ -26,7 +26,7 @@ Eine kleine, deutschsprachige Web-App für die Trainingsanwesenheit einer G-Juge
 
 Die Teamansicht lädt Training, Kinder und Verlauf in einer einzigen Serveranfrage und einer gemeinsamen Datenbankabfrage. Häkchen reagieren sofort; „Wird gespeichert …“ kennzeichnet noch nicht bestätigte Änderungen. Während ein Kind gespeichert wird, können andere Kinder bereits abgehakt werden. Nur weitere Änderungen am selben Kind warten auf die Bestätigung, damit keine Schreibvorgänge vertauscht werden. Datumwechsel, Verwaltung und Abmelden warten auf ausstehende Speicherungen.
 
-Beim Anlegen eines Trainings werden die zu diesem Zeitpunkt aktiven Kinder aufgenommen. Neu hinzugefügte Kinder werden zusätzlich in allen bereits angelegten Trainings ergänzt, auch in vergangenen und zukünftigen Terminen, zunächst als nicht anwesend. Das Hinzufügen und die Teilnahmezuordnungen werden atomar gespeichert; vorhandene Häkchen bleiben unverändert. Damit erhöhen sich die Teilnehmerzahlen der bisherigen Trainings. Bereits vor dieser Änderung vorhandene fehlende Zuordnungen werden nicht nachträglich aufgefüllt. Archivierte Kinder bleiben in bestehenden Trainings sichtbar und fehlen in neu angelegten Trainings; Reaktivieren allein ergänzt keine fehlenden Zuordnungen. Umbenennungen gelten auch für frühere Listen. Gleichlautende Vornamen sind getrennte Datensätze; zur Unterscheidung kann ein kurzer Zusatz verwendet werden.
+Beim Anlegen eines Trainings werden die zu diesem Zeitpunkt aktiven Kinder aufgenommen. Neu hinzugefügte Kinder werden zusätzlich in allen bereits angelegten Trainings ergänzt, auch in vergangenen und zukünftigen Terminen, zunächst als nicht anwesend. Das Hinzufügen und die Teilnahmezuordnungen werden atomar gespeichert; vorhandene Häkchen bleiben unverändert. Damit erhöhen sich die Teilnehmerzahlen der bisherigen Trainings. Migration `002_backfill_active_children.sql` ergänzt einmalig auch ältere fehlende Zuordnungen aktiver Kinder mit „nicht anwesend“ und Version 0, ohne vorhandene Zustände oder Versionen zu überschreiben. Archivierte Kinder werden dabei nicht ergänzt. Sie bleiben in bestehenden Trainings sichtbar und fehlen in neu angelegten Trainings; Reaktivieren allein ergänzt keine fehlenden Zuordnungen. Umbenennungen gelten auch für frühere Listen. Gleichlautende Vornamen sind getrennte Datensätze; zur Unterscheidung kann ein kurzer Zusatz verwendet werden.
 
 ## Wer war wann dabei?
 
@@ -58,6 +58,7 @@ In `.env.local` eintragen:
 | Variable | Bedeutung |
 | --- | --- |
 | `DATABASE_URL` | PostgreSQL-Verbindungszeichenfolge. Für Neon die gepoolte Adresse verwenden; TLS mit Zertifikatsprüfung (`sslmode=verify-full`). |
+| `DATABASE_URL_UNPOOLED` | Direkte PostgreSQL-Verbindung für Migrationen; falls nicht gesetzt, verwendet das Migrationsskript `DATABASE_URL`. Für Neon die direkte Adresse bevorzugen. |
 | `TEAM_PASSWORD_HASH` | Vollständiger `scrypt:…:…`-Wert aus `npm run password:hash`, **nicht** das Klartextpasswort. |
 | `SESSION_SECRET` | Der zufällige Wert aus dem zweiten Befehl, mindestens 32 Zeichen. |
 | `APP_ORIGIN` | Exakte App-Adresse ohne abschließenden Schrägstrich, lokal `http://localhost:3000`, online z. B. `https://euer-team.netlify.app`. Für den CSRF-Schutz wird nicht auf Proxy-/Host-Header vertraut. |

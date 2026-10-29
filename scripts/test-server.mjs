@@ -10,6 +10,7 @@ const salt = randomBytes(16).toString("hex");
 const env = {
   ...process.env,
   DATABASE_URL: `postgresql://postgres:postgres@${server.getServerConn()}/postgres?sslmode=disable`,
+  DATABASE_URL_UNPOOLED: `postgresql://postgres:postgres@${server.getServerConn()}/postgres?sslmode=disable`,
   TEAM_PASSWORD_HASH: `scrypt:${salt}:${scryptSync("browser-test-password", salt, 64).toString("hex")}`,
   SESSION_SECRET: randomBytes(32).toString("hex"),
   NEXT_TELEMETRY_DISABLED: "1",
