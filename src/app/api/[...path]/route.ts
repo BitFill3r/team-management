@@ -27,6 +27,7 @@ async function handle(request: NextRequest, context: Context) {
       return response;
     }
     if (!(await authenticated())) throw new store.HttpError(401, "Bitte erneut anmelden.");
+    if (path === "dashboard" && method === "GET") return NextResponse.json(await store.getSnapshot(dateSchema.parse(request.nextUrl.searchParams.get("date"))));
     if (path === "logout" && method === "POST") {
       const response = NextResponse.json({ ok: true });
       response.cookies.set(SESSION_COOKIE, "", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", path: "/", maxAge: 0 });

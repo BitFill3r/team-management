@@ -1,13 +1,40 @@
 import { db } from "./db";
-import type { Child, HistoryEntry, Participant, Training } from "./types";
+import type { Child, HistoryEntry, Snapshot, Training } from "./types";
 
 export class HttpError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
 const conflict = () => new HttpError(409, "Die Daten wurden inzwischen geändert. Bitte neu laden und erneut versuchen.");
 
+const childrenQuery = "SELECT id, name, archived, version FROM children ORDER BY archived, lower(name), created_at";
+const trainingQuery = `
+  SELECT t.id, to_char(t.date, 'YYYY-MM-DD') AS date,
+    COALESCE((
+      SELECT json_agg(p) FROM (
+        SELECT c.id, c.name, c.archived, c.version, a.present, a.version AS "attendanceVersion"
+        FROM attendance a JOIN children c ON c.id=a.child_id
+        WHERE a.training_id=t.id ORDER BY lower(c.name), c.created_at
+      ) p
+    ), '[]'::json) AS participants
+  FROM trainings t WHERE t.date=$1`;
+const historyQuery = `
+  SELECT t.id, to_char(t.date, 'YYYY-MM-DD') AS date, count(a.child_id)::int AS total,
+    count(a.child_id) FILTER (WHERE a.present)::int AS present
+  FROM trainings t LEFT JOIN attendance a ON a.training_id=t.id
+  GROUP BY t.id ORDER BY t.date DESC`;
+
+export async function getSnapshot(date: string): Promise<Snapshot> {
+  const result = await db().query<Snapshot>(`
+    SELECT
+      (SELECT row_to_json(t) FROM (${trainingQuery}) t) AS training,
+      COALESCE((SELECT json_agg(c) FROM (${childrenQuery}) c), '[]'::json) AS children,
+      COALESCE((SELECT json_agg(h) FROM (${historyQuery}) h), '[]'::json) AS history
+  `, [date]);
+  return result.rows[0];
+}
+
 export async function listChildren() {
-  const result = await db().query<Child>("SELECT id, name, archived, version FROM children ORDER BY archived, lower(name), created_at");
+  const result = await db().query<Child>(childrenQuery);
   return result.rows;
 }
 
@@ -31,14 +58,8 @@ export async function deleteChild(id: string, version: number) {
 }
 
 export async function getTraining(date: string): Promise<Training | null> {
-  const result = await db().query<{ id: string; date: string }>("SELECT id, to_char(date, 'YYYY-MM-DD') AS date FROM trainings WHERE date=$1", [date]);
-  const training = result.rows[0];
-  if (!training) return null;
-  const participants = await db().query<Participant>(`
-    SELECT c.id, c.name, c.archived, c.version, a.present, a.version AS "attendanceVersion"
-    FROM attendance a JOIN children c ON c.id=a.child_id
-    WHERE a.training_id=$1 ORDER BY lower(c.name), c.created_at`, [training.id]);
-  return { ...training, participants: participants.rows };
+  const result = await db().query<Training>(trainingQuery, [date]);
+  return result.rows[0] ?? null;
 }
 
 export async function createTraining(date: string) {
@@ -65,11 +86,7 @@ export async function setAttendance(input: { trainingId: string; childId: string
 }
 
 export async function history() {
-  const result = await db().query<HistoryEntry>(`
-    SELECT t.id, to_char(t.date, 'YYYY-MM-DD') AS date, count(a.child_id)::int AS total,
-      count(a.child_id) FILTER (WHERE a.present)::int AS present
-    FROM trainings t LEFT JOIN attendance a ON a.training_id=t.id
-    GROUP BY t.id ORDER BY t.date DESC`);
+  const result = await db().query<HistoryEntry>(historyQuery);
   return result.rows;
 }
 

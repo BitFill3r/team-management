@@ -6,6 +6,10 @@ for (const setup of [
   { label: "Handy", width: 390, height: 844, first: "Jonas", second: "Ben", date: "2026-10-30", next: "2026-11-03" },
 ]) {
   test(`${setup.label}: Team pflegen, Anwesenheit speichern und Fehler korrigieren`, async ({ page }) => {
+    const reads: string[] = [];
+    page.on("request", (request) => {
+      if (request.method() === "GET" && request.url().includes("/api/")) reads.push(new URL(request.url()).pathname);
+    });
     await page.setViewportSize({ width: setup.width, height: setup.height });
     await page.goto("/");
     await expect(page).toHaveURL(/\/login$/);
@@ -15,6 +19,7 @@ for (const setup of [
     await page.getByLabel("Team-Passwort").fill("browser-test-password");
     await page.getByRole("button", { name: "Zum Training" }).click();
     await expect(page.getByRole("heading", { name: "Wer ist dabei?" })).toBeVisible();
+    expect(reads).toEqual(["/api/dashboard"]);
     await page.getByRole("button", { name: "Kinder verwalten", exact: true }).click();
     for (const name of [setup.first, setup.second]) {
       await page.getByLabel("Neuer Vorname").fill(name);
@@ -55,15 +60,25 @@ for (const setup of [
     });
     await first.click();
     await expect(first).toHaveAttribute("aria-disabled", "true");
+    await expect(first).not.toBeChecked({ timeout: 500 });
+    await expect(page.getByRole("status")).toContainText("Wird gespeichert");
+    const second = page.getByRole("checkbox", { name: `${setup.second}: anwesend`, exact: true });
+    await expect(second).toHaveAttribute("aria-disabled", "false");
+    await second.click();
+    await expect(second).toBeChecked({ timeout: 500 });
     await first.dispatchEvent("click");
     release();
     await expect(first).toHaveAttribute("aria-disabled", "false");
     await expect(first).not.toBeChecked();
-    expect(writes).toBe(1);
+    await expect(second).toHaveAttribute("aria-disabled", "false");
+    expect(writes).toBe(2);
     await page.unroute("**/api/attendance");
     await first.click();
     await expect(first).toBeChecked();
     await expect(first).toHaveAttribute("aria-disabled", "false");
+    await second.click();
+    await expect(second).not.toBeChecked();
+    await expect(second).toHaveAttribute("aria-disabled", "false");
 
     await page.route("**/api/attendance", (route) => route.abort(), { times: 1 });
     await first.click();

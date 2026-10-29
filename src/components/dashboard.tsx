@@ -4,11 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api, displayDate, errorMessage, today } from "@/lib/client";
-import type { Child, HistoryEntry, Participant, Training } from "@/lib/types";
+import type { Child, Participant, Snapshot, Training } from "@/lib/types";
 import { dateSchema } from "@/lib/validation";
 
 type View = "training" | "history" | "admin";
-type Snapshot = { training: Training | null; children: Child[]; history: HistoryEntry[] };
 type Undo = { childId: string; present: boolean; version: number };
 
 export default function Dashboard() {
@@ -18,7 +17,11 @@ export default function Dashboard() {
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState(false);
+  const [mutating, setBusy] = useState(false);
+  const [pendingChildren, setPendingChildren] = useState<string[]>([]);
+  const pending = useRef(new Set<string>());
+  const failed = useRef(false);
+  const busy = mutating || pendingChildren.length > 0;
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [needsReload, setNeedsReload] = useState(false);
@@ -26,14 +29,18 @@ export default function Dashboard() {
   const lock = useRef(false);
 
   useEffect(() => {
+    if (!pendingChildren.length) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [pendingChildren.length]);
+
+  useEffect(() => {
     const controller = new AbortController();
-    Promise.all([
-      api<Training | null>(`training?date=${date}`, "GET", undefined, controller.signal),
-      api<Child[]>("children", "GET", undefined, controller.signal),
-      api<HistoryEntry[]>("history", "GET", undefined, controller.signal),
-    ]).then(([training, children, history]) => {
+    api<Snapshot>(`dashboard?date=${date}`, "GET", undefined, controller.signal).then((snapshot) => {
       if (controller.signal.aborted) return;
-      setSnapshot({ training, children, history });
+      setSnapshot(snapshot);
+      failed.current = false;
       setLoading(false); setNeedsReload(false);
     }).catch((error: unknown) => {
       if (controller.signal.aborted) return;
@@ -57,7 +64,7 @@ export default function Dashboard() {
     setLoading(true); setError(""); setStatus(""); setUndo(null); setDate(value);
   }
   async function mutate(action: () => Promise<void>, message: string) {
-    if (lock.current) return false;
+    if (lock.current || pending.current.size) return false;
     lock.current = true; setBusy(true); setError(""); setStatus("Wird gespeichert …");
     try {
       await action();
@@ -73,24 +80,51 @@ export default function Dashboard() {
   const training = snapshot?.training;
   const disabled = busy || loading || needsReload;
 
+  function showAttendance(childId: string, present: boolean, version?: number) {
+    setSnapshot((previous) => {
+      if (!previous?.training) return previous;
+      const child = previous.training.participants.find((entry) => entry.id === childId);
+      if (!child) return previous;
+      return {
+        ...previous,
+        training: { ...previous.training, participants: previous.training.participants.map((entry) => entry.id === childId
+          ? { ...entry, present, attendanceVersion: version ?? entry.attendanceVersion } : entry) },
+        history: previous.history.map((entry) => entry.id === previous.training?.id
+          ? { ...entry, present: entry.present + Number(present) - Number(child.present) } : entry),
+      };
+    });
+  }
+
   async function changeAttendance(child: Participant, present: boolean, version = child.attendanceVersion, isUndo = false) {
-    if (!training || disabled) return;
-    await mutate(async () => {
+    if (!training || lock.current || loading || needsReload || failed.current || pending.current.has(child.id)) return;
+    pending.current.add(child.id);
+    setPendingChildren([...pending.current]);
+    setUndo(null); setError(""); setStatus("Wird gespeichert …");
+    showAttendance(child.id, present);
+    try {
       const saved = await api<{ present: boolean; version: number }>("attendance", "PATCH", {
         trainingId: training.id, childId: child.id, present, version,
       });
-      setSnapshot((previous) => previous?.training ? {
-        ...previous,
-        training: { ...previous.training, participants: previous.training.participants.map((entry) => entry.id === child.id ? { ...entry, present: saved.present, attendanceVersion: saved.version } : entry) },
-        history: previous.history.map((entry) => entry.id === training.id ? { ...entry, present: entry.present + Number(saved.present) - Number(child.present) } : entry),
-      } : previous);
-      setUndo(isUndo ? null : { childId: child.id, present: child.present, version: saved.version });
-    }, isUndo ? "Letzte Änderung rückgängig gemacht." : "Anwesenheit gespeichert.");
+      showAttendance(child.id, saved.present, saved.version);
+      if (!failed.current) {
+        setUndo(isUndo ? null : { childId: child.id, present: child.present, version: saved.version });
+        setStatus(isUndo ? "Letzte Änderung rückgängig gemacht." : "Anwesenheit gespeichert.");
+      }
+    } catch (error) {
+      failed.current = true;
+      showAttendance(child.id, child.present, child.attendanceVersion);
+      setError(errorMessage(error)); setNeedsReload(true); setUndo(null); setStatus("");
+    } finally {
+      pending.current.delete(child.id);
+      setPendingChildren([...pending.current]);
+      if (pending.current.size && !failed.current) setStatus("Wird gespeichert …");
+    }
   }
 
   return <div className="app-shell">
     <header className="topbar">
-      <Link className="brand" href="/" aria-label="Am Ball – Startseite"><span className="brand-mark small" aria-hidden="true">AB</span>Am Ball<span className="accent">.</span></Link>
+      <Link className="brand" href="/" aria-label="Am Ball – Startseite" aria-disabled={busy}
+        onClick={(event) => { if (busy) event.preventDefault(); }}><span className="brand-mark small" aria-hidden="true">AB</span>Am Ball<span className="accent">.</span></Link>
       <button className="text-button" disabled={busy} onClick={() => void mutate(async () => {
         await api("logout", "POST", {}); router.replace("/login"); router.refresh();
       }, "Abgemeldet.")}>Abmelden</button>
@@ -124,7 +158,8 @@ export default function Dashboard() {
               {training.participants.map((child) => <label className={`participant ${child.present ? "present" : ""}`} key={child.id}>
                 <span className="avatar" aria-hidden="true">{child.name.slice(0, 1).toLocaleUpperCase("de")}</span>
                 <span className="participant-name">{child.name}{child.archived && <small>Archiviert</small>}</span>
-                <input type="checkbox" checked={child.present} disabled={loading || needsReload} aria-disabled={disabled}
+                <input type="checkbox" checked={child.present} disabled={loading || needsReload}
+                  aria-disabled={mutating || pendingChildren.includes(child.id)} aria-busy={pendingChildren.includes(child.id)}
                   onChange={(event) => void changeAttendance(child, event.target.checked)} aria-label={`${child.name}: anwesend`} />
               </label>)}
             </div>

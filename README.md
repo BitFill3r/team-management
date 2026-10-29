@@ -23,6 +23,8 @@ Eine kleine, deutschsprachige Web-App für die Trainingsanwesenheit einer G-Juge
 - Trainingsverlauf ansehen und nachträglich bearbeiten.
 - Sichtbare Speicher-/Verbindungsfehler und Versionsschutz gegen das Überschreiben paralleler Änderungen.
 
+Die Teamansicht lädt Training, Kinder und Verlauf in einer einzigen Serveranfrage und einer gemeinsamen Datenbankabfrage. Häkchen reagieren sofort; „Wird gespeichert …“ kennzeichnet noch nicht bestätigte Änderungen. Während ein Kind gespeichert wird, können andere Kinder bereits abgehakt werden. Nur weitere Änderungen am selben Kind warten auf die Bestätigung, damit keine Schreibvorgänge vertauscht werden. Datumwechsel, Verwaltung und Abmelden warten auf ausstehende Speicherungen.
+
 Beim Anlegen eines Trainings werden die zu diesem Zeitpunkt aktiven Kinder aufgenommen. Später hinzugefügte Kinder erscheinen erst in neuen Trainings. Archivierte Kinder bleiben in bestehenden Trainings sichtbar. Umbenennungen gelten auch für frühere Listen. Gleichlautende Vornamen sind getrennte Datensätze; zur Unterscheidung kann ein kurzer Zusatz verwendet werden.
 
 ## Technik
@@ -80,9 +82,10 @@ Ein echtes Netlify-/Neon-Deployment benötigt eigene Konten und Zugangsdaten. Di
 - Passwortwechsel: `npm run password:hash`, neuen Hash in Netlify hinterlegen, neu deployen und das neue Passwort ausschließlich über einen geeigneten privaten Kanal teilen.
 - Die Anmeldung erlaubt zusammen maximal 20 Versuche in einem festen Fenster von 15 Minuten, gespeichert in PostgreSQL. Auch erfolgreiche Anmeldungen zählen; aktive Sitzungen sind nicht betroffen. Die gemeinsame Grenze vermeidet das Vertrauen auf manipulierbare IP-Header, bedeutet aber auch, dass Fremde vorübergehend weitere Logins blockieren können. Bei breiterer Nutzung zusätzlich Netlifys vorgeschaltete Rate-Limits/WAF konfigurieren.
 - Schreibende Anfragen verlangen dieselbe Origin und JSON. Sämtliche Daten-Endpunkte prüfen die Sitzung serverseitig. Antworten der API werden nicht gecacht.
-- Bei einem Schreibfehler bleibt die letzte bestätigte Anzeige erhalten und weitere Änderungen werden bis zum Neuladen gesperrt. Eine unterbrochene Antwort kann trotz erfolgreicher Speicherung auftreten: zuerst den gespeicherten Stand neu laden und prüfen.
+- Bei einem Schreibfehler wird die sofort angezeigte Änderung des betroffenen Kindes auf den letzten bestätigten Stand zurückgesetzt. Weitere Änderungen werden bis zum Neuladen gesperrt; bereits laufende Speicherungen anderer Kinder werden noch abgeschlossen. Eine unterbrochene Antwort kann trotz erfolgreicher Speicherung auftreten: zuerst den gespeicherten Stand neu laden und prüfen. Bei Verlassen der Seite mit ausstehenden Anwesenheitsspeicherungen wird eine Browserwarnung angefordert.
 - Rückgängig gilt nur für die letzte erfolgreiche Anwesenheitsänderung im aktuell geöffneten Training und Browserzustand. Ein Datumwechsel oder Neuladen verwirft diese lokale Rückgängig-Information. Änderungen anderer Geräte werden durch Versionsprüfung geschützt; ein Konflikt erfordert Neuladen.
 - Kein Offline-Modus und keine Live-Synchronisierung: auf anderen Geräten geänderte Daten werden beim Neuladen beziehungsweise Wechsel des Datums geladen. Zum aktuellen Training kann die Browserseite neu geladen werden.
+- Die erste Datenbankanfrage nach längerer Inaktivität kann durch das Aufwachen von Neon und einen Kaltstart der Netlify-Funktion länger dauern. Ein Wechsel der Netlify-Funktionsregion nach Frankfurt kann die Datenbanklatenz reduzieren, erfordert laut Netlify aber einen passenden Tarif (Pro/Enterprise). Die App ändert weder Tarif noch Datenbankregion automatisch.
 
 ## Datenschutz und Sicherungen
 

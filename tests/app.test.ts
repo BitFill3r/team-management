@@ -4,11 +4,12 @@ import { PGlite } from "@electric-sql/pglite";
 import { NextRequest } from "next/server";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const state = vi.hoisted(() => ({ cookie: undefined as string | undefined }));
+const state = vi.hoisted(() => ({ cookie: undefined as string | undefined, queries: 0 }));
 let database: PGlite;
 vi.mock("@/lib/db", () => ({
   db: () => ({
     query: async (sql: string, values?: unknown[]) => {
+      state.queries++;
       const result = await database.query(sql, values);
       return { rows: result.rows, rowCount: result.rows.length || result.affectedRows };
     },
@@ -103,6 +104,22 @@ describe("Zugang", () => {
 });
 
 describe("Persistenz und Historie", () => {
+  it("lädt Training, Kinder und Verlauf als einen konsistenten Datenstand", async () => {
+    expect(await store.getSnapshot("2026-10-29")).toEqual({ training: null, children: [], history: [] });
+    const child = await store.createChild("Emil");
+    const training = (await store.createTraining("2026-10-29"))!;
+    await store.setAttendance({ trainingId: training.id, childId: child.id, present: true, version: 0 });
+    const queriesBefore = state.queries;
+    const snapshot = await store.getSnapshot("2026-10-29");
+    expect(state.queries - queriesBefore).toBe(1);
+    expect(snapshot.children).toEqual(await store.listChildren());
+    expect(snapshot.training).toEqual(await store.getTraining("2026-10-29"));
+    expect(snapshot.history).toEqual(await store.history());
+    expect(snapshot.training?.participants[0]).toMatchObject({ present: true, attendanceVersion: 1 });
+    expect((await store.getSnapshot("2026-10-30")).training).toBeNull();
+    await store.deleteChild(child.id, 0);
+    expect((await store.getSnapshot("2026-10-29")).training?.participants).toEqual([]);
+  });
   it("speichert einzelne Änderungen und Rückgängig mit Versionsschutz", async () => {
     const child = await store.createChild("Emil");
     const training = (await store.createTraining("2026-10-29"))!;
@@ -169,6 +186,7 @@ describe("HTTP-Schnittstelle", () => {
       ["children", "PATCH", {}], ["children", "DELETE", {}],
       ["training?date=2026-10-29", "GET", undefined], ["training", "POST", {}],
       ["attendance", "PATCH", {}], ["history", "GET", undefined],
+      ["dashboard?date=2026-10-29", "GET", undefined],
     ] as const) {
       const response = await request(path, method, data);
       expect(response.status).toBe(401);
@@ -192,6 +210,11 @@ describe("HTTP-Schnittstelle", () => {
     expect((await request("children", "POST", { name: "Emil" }, "https://foreign.example")).status).toBe(403);
     expect((await request("children", "POST", { name: " " })).status).toBe(400);
     expect((await request("training?date=2026-02-30")).status).toBe(400);
+    expect((await request("dashboard?date=2026-02-30")).status).toBe(400);
+    const dashboard = await request("dashboard?date=2026-10-29");
+    expect(dashboard.status).toBe(200);
+    expect(dashboard.headers.get("cache-control")).toBe("no-store");
+    expect(await dashboard.json()).toEqual({ training: null, children: [], history: [] });
     const child = await store.createChild("Emil");
     expect((await request("children", "DELETE", { id: child.id, version: 0 })).status).toBe(400);
     expect(await store.listChildren()).toHaveLength(1);
