@@ -8,8 +8,9 @@ import type { Child, Participant, Snapshot, Training } from "@/lib/types";
 import { dateSchema } from "@/lib/validation";
 import AttendanceOverview from "./attendance-overview";
 import TrainingDatePicker from "./training-date-picker";
+import SurveyManager from "./survey-manager";
 
-type View = "training" | "history" | "admin";
+type View = "training" | "history" | "admin" | "surveys";
 type Undo = { childId: string; present: boolean; version: number };
 
 export default function Dashboard() {
@@ -135,11 +136,11 @@ export default function Dashboard() {
     <main>
       <div className="page-heading"><div><p className="eyebrow">G-JUGEND · TRAINERBEREICH</p><h1>Kleine Kicker.<br />Großes Team.</h1></div><div className="team-badge">G<span>JUGEND</span></div></div>
       <nav className="tabs" aria-label="Hauptnavigation">
-        {([["training", "Training"], ["history", "Verlauf"], ["admin", "Kinder verwalten"]] as const).map(([key, label]) =>
+        {([["training", "Training"], ["history", "Verlauf"], ["admin", "Kinder verwalten"], ["surveys", "Umfragen"]] as const).map(([key, label]) =>
           <button key={key} className={view === key ? "active" : ""} aria-current={view === key ? "page" : undefined}
             disabled={busy} onClick={() => setView(key)}>{label}</button>)}
       </nav>
-      <div className="feedback" aria-live="polite" role="status">{status}</div>
+      <div className="feedback" aria-live={view === "surveys" ? undefined : "polite"} role={view === "surveys" ? undefined : "status"}>{view !== "surveys" && status}</div>
       {error && <div className="error error-panel" role="alert"><p>{error}</p><button className="secondary" disabled={busy || loading} onClick={reload}>Gespeicherten Stand neu laden</button> <Link href="/login">Zur Anmeldung</Link></div>}
       {loading ? <section className="card"><p role="status">Die Teamliste wird geladen …</p></section> : snapshot && <>
         {view === "training" && <section className="card">
@@ -174,6 +175,7 @@ export default function Dashboard() {
           </>}
         </section>}
         {view === "history" && <AttendanceOverview month={overviewMonth} onMonthChange={setOverviewMonth} onOpenTraining={chooseDate} />}
+        {view === "surveys" && <SurveyManager onBusy={setBusy} />}
         {view === "admin" && <section className="card">
           <div className="section-heading"><div><p className="eyebrow">DAS SIND WIR</p><h2>Kinder verwalten</h2></div><span className="pill">{snapshot.children.filter((child) => !child.archived).length} aktiv</span></div>
           <p className="muted">Nur Vornamen, keine weiteren Kinderdaten. Neue Kinder werden auch in allen bereits angelegten Trainings ergänzt, zunächst als nicht anwesend.</p>

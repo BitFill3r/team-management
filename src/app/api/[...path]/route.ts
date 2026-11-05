@@ -3,6 +3,7 @@ import { z, ZodError } from "zod";
 import { authenticated, createSession, SESSION_COOKIE, SESSION_SECONDS, verifyPassword } from "@/lib/auth";
 import * as store from "@/lib/store";
 import { attendanceSchema, childCreateSchema, childDeleteSchema, childUpdateSchema, dateSchema, monthSchema } from "@/lib/validation";
+import { surveyApi } from "@/lib/survey-api";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -18,6 +19,8 @@ async function handle(request: NextRequest, context: Context) {
       if (request.headers.get("origin") !== origin) throw new store.HttpError(403, "Ungültige Anfrage. Bitte die App neu öffnen.");
       if (!request.headers.get("content-type")?.startsWith("application/json")) throw new store.HttpError(415, "JSON-Anfrage erforderlich.");
     }
+    if (path.split("/")[0] === "surveys" || path.split("/")[0] === "public-surveys")
+      return await surveyApi(request, path.split("/"), body);
     if (path === "login" && method === "POST") {
       await store.claimLoginAttempt();
       const { password } = z.object({ password: z.string().min(1).max(256) }).parse(await body(request));
@@ -52,16 +55,26 @@ async function handle(request: NextRequest, context: Context) {
     if (path === "history" && method === "GET") return NextResponse.json(await store.history());
     throw new store.HttpError(404, "Diese Funktion wurde nicht gefunden.");
   } catch (error) {
-    if (error instanceof ZodError) return NextResponse.json({ error: "Bitte die Eingaben prüfen: gültiges Datum, Vorname (1–60 Zeichen) und gültige Auswahl erforderlich." }, { status: 400 });
-    if (error instanceof store.HttpError) return NextResponse.json({ error: error.message }, { status: error.status });
+    if (error instanceof ZodError) return NextResponse.json({ error: "Bitte die Eingaben prüfen: Pflichtfelder, erlaubte Textlängen und gültige Auswahl beachten." }, { status: 400 });
+    if (error instanceof store.HttpError) return NextResponse.json({ error: error.message }, { status: error.status, headers: error.status === 429 ? { "Retry-After": "900" } : undefined });
     console.error("API-Anfrage fehlgeschlagen", error);
     return NextResponse.json({ error: "Die Anfrage konnte nicht gespeichert oder geladen werden. Bitte erneut versuchen." }, { status: 500 });
   }
 }
 
-async function body(request: NextRequest): Promise<unknown> {
-  const text = await request.text();
-  if (text.length > 4096) throw new store.HttpError(413, "Die Anfrage ist zu groß.");
+async function body(request: NextRequest, limit = 4096): Promise<unknown> {
+  const reader = request.body?.getReader();
+  if (!reader) throw new store.HttpError(400, "Die Anfrage enthält keine Daten.");
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > limit) { await reader.cancel(); throw new store.HttpError(413, "Die Anfrage ist zu groß."); }
+    chunks.push(value);
+  }
+  const text = Buffer.concat(chunks).toString("utf8");
   try { return JSON.parse(text); }
   catch { throw new store.HttpError(400, "Die Anfrage enthält ungültige Daten."); }
 }

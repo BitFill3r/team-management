@@ -1,5 +1,6 @@
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import { matchesPassword } from "./password";
 
 export const SESSION_COOKIE = "team-session";
 export const SESSION_SECONDS = 60 * 60 * 12;
@@ -14,8 +15,7 @@ function config() {
 
 export function verifyPassword(password: string) {
   const { passwordHash } = config();
-  const [, salt, expected] = passwordHash.split(":");
-  return timingSafeEqual(scryptSync(password, salt, 64), Buffer.from(expected, "hex"));
+  return matchesPassword(password, passwordHash);
 }
 
 function signature(payload: string) {
