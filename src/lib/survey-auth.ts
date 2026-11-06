@@ -24,7 +24,7 @@ export function validSurveySession(token: string | undefined, id: string, versio
 export function surveyVisitor(request: NextRequest) {
   if (process.env.NODE_ENV !== "production") return sign("local-development");
   const netlifyOrigin = process.env.APP_ORIGIN && new URL(process.env.APP_ORIGIN).hostname.endsWith(".netlify.app");
-  if (process.env.NETLIFY === "true" || netlifyOrigin) {
+  if (process.env.TRUST_NETLIFY_IP === "true" || process.env.NETLIFY === "true" || netlifyOrigin) {
     const ip = request.headers.get("x-nf-client-connection-ip");
     if (ip && isIP(ip)) return sign(`visitor:${ip}`);
   }

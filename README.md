@@ -4,7 +4,8 @@ Eine kleine, deutschsprachige Web-App für die Trainingsanwesenheit einer G-Juge
 
 ## Aktuelles Deployment
 
-- App: https://am-ball-team-management.netlify.app
+- App: https://fuss-am-ball.de
+- `www.fuss-am-ball.de` und die bisherige Adresse `am-ball-team-management.netlify.app` leiten mit erhaltenem Pfad auf die Hauptdomain weiter.
 - Netlify-Projekt: https://app.netlify.com/projects/am-ball-team-management/
 - GitHub: https://github.com/BitFill3r/team-management, Produktionsbranch `main` mit automatischen Netlify-Deployments.
 - Datenbank: Neon-Projekt `team-management`, AWS Frankfurt. Die Netlify-Funktionen laufen derzeit in der voreingestellten Region US East (Ohio); die EU-Datenbankregion bedeutet daher keine ausschließlich europäische Verarbeitung.
@@ -56,6 +57,8 @@ Im geschützten Bereich **Umfragen** lassen sich mehrere eigenständige Aktionen
 **Zugriffsschutz:** Eigene HttpOnly-Session pro Umfrage, 12 Stunden gültig und auf den jeweiligen API-Pfad begrenzt. Persistente Limits vor der Passwortprüfung: 10 Versuche pro Umfrage/Besucher und 100 insgesamt pro Umfrage innerhalb von 15 Minuten. Einsendungen: 30 pro Umfrage/Besucher und 1000 insgesamt pro 15 Minuten. Bei Überschreitung antwortet die API mit HTTP 429 und `Retry-After`. Geteilte IP-Adressen können gemeinsame Limits bedeuten; die globale Schwelle begrenzt verteilte Versuche, kann aber auch legitime Teilnehmende vorübergehend bremsen. Der Team-Login ist davon unabhängig.
 
 Die Netlify-Bereitstellung verwendet ausschließlich den von Netlify gesetzten `x-nf-client-connection-ip`-Header, nicht beliebige `X-Forwarded-For`-Werte. Er wird nur bei Netlify-Umgebung bzw. konfigurierter `.netlify.app`-Origin als vertrauenswürdig behandelt; Besuchermerkmale werden per HMAC gehasht. Fehlt auf anderen Hosts eine verlässlich ermittelte IP, gilt ein gemeinsames Besucherlimit mit expliziter Serverwarnung statt eines umgehbaren Header-Fallbacks. Für einen Hostingwechsel diesen Punkt vor Freigabe prüfen. Abgelaufene Limit-Einträge werden bei Zugriffen begrenzt bereinigt, beim Löschen einer Umfrage vollständig entfernt.
+
+Bei unserer eigenen Domain ist `APP_ORIGIN=https://fuss-am-ball.de` und für die Netlify-Produktionsfunktionen ausdrücklich `TRUST_NETLIFY_IP=true` gesetzt. Bei einem Domainwechsel `APP_ORIGIN` aktualisieren, weitere Adressen auf die Hauptdomain umleiten und neu deployen. Andernfalls lehnt der Origin-Schutz die Anmeldung mit „Ungültige Anfrage“ ab. Das Hosting-Signal `TRUST_NETLIFY_IP=true` nur bei tatsächlichem Betrieb auf Netlify verwenden; bei einem Hostingwechsel entfernen und die vertrauenswürdige Besucheridentifikation neu prüfen. Die eigene Variable vermeidet das Überschreiben reservierter Netlify-Plattformvariablen.
 
 Vor Veröffentlichung der Funktion muss `003_surveys.sql` mit `npm run db:migrate` angewendet werden, bevorzugt über `DATABASE_URL_UNPOOLED`. Die Migration zuerst auf einem isolierten Neon-Schema-Branch mit synthetischen Daten testen. Sie ergänzt ausschließlich neue Tabellen und verändert keine Trainings- oder Kinderdaten. Anschließend die App veröffentlichen; keine echte Umfrage wird automatisch angelegt.
 

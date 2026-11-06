@@ -4,3 +4,9 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+[[redirects]]
+  from = "https://am-ball-team-management.netlify.app/*"
+  to = "https://fuss-am-ball.de/:splat"
+  status = 301
+  force = true

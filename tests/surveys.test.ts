@@ -244,6 +244,18 @@ describe("Umfragezugang und APIs", () => {
       vi.stubEnv("NETLIFY", originalNetlify);
     }
   });
+  it("erkennt explizites Netlify-Hosting auch mit eigener Domain", () => {
+    const original = { node: process.env.NODE_ENV, origin: process.env.APP_ORIGIN, trust: process.env.TRUST_NETLIFY_IP, netlify: process.env.NETLIFY };
+    try {
+      vi.stubEnv("NODE_ENV", "production"); vi.stubEnv("APP_ORIGIN", "https://fuss-am-ball.de");
+      vi.stubEnv("NETLIFY", undefined); vi.stubEnv("TRUST_NETLIFY_IP", "true");
+      const visitor = (ip: string) => surveyVisitor(new NextRequest("https://fuss-am-ball.de", { headers: { "x-nf-client-connection-ip": ip } }));
+      expect(visitor("192.0.2.1")).not.toBe(visitor("192.0.2.2"));
+    } finally {
+      vi.stubEnv("NODE_ENV", original.node); vi.stubEnv("APP_ORIGIN", original.origin);
+      vi.stubEnv("TRUST_NETLIFY_IP", original.trust); vi.stubEnv("NETLIFY", original.netlify);
+    }
+  });
   it("führt den API-Lebenszyklus einschließlich Bodylimit, Antworten und Export aus", async () => {
     state.admin = true;
     expect((await request("surveys", "POST", { config: { ...config, description: "a".repeat(17000) }, password })).status).toBe(413);
