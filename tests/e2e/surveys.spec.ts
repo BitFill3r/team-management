@@ -24,15 +24,20 @@ for (const width of [1280, 390, 320]) {
     try {
       await parent.goto(link);
       await expect(parent.getByRole("heading", { name: "Umfrage nicht verfügbar" })).toBeVisible();
+      await expect(parent.getByRole("contentinfo")).toHaveText("Powered by heydot.de - HEYDOT Agency - Eltville am Rhein");
+      await expect(parent.getByRole("contentinfo").getByRole("link", { name: "heydot.de" })).toHaveAttribute("href", "https://www.heydot.de");
+      expect(await parent.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await page.getByRole("button", { name: "Umfrage öffnen", exact: true }).click();
       await expect(page.getByRole("status")).toContainText("Umfrage geöffnet");
       await parent.reload();
+      await expect(parent.getByRole("contentinfo")).toHaveText("Powered by heydot.de - HEYDOT Agency - Eltville am Rhein");
       await parent.getByLabel("Umfrage-Passwort").fill("wrong");
       await parent.getByRole("button", { name: "Umfrage öffnen", exact: true }).click();
       await expect(parent.locator(".error[role=alert]")).toContainText("nicht richtig");
       await parent.getByLabel("Umfrage-Passwort").fill(password);
       await parent.getByRole("button", { name: "Umfrage öffnen", exact: true }).click();
       await expect(parent.getByRole("heading", { name: `Trikots ${width}`, exact: true })).toBeVisible();
+      await expect(parent.getByRole("contentinfo")).toHaveText("Powered by heydot.de - HEYDOT Agency - Eltville am Rhein");
       const first = parent.getByLabel("Vorname des Kindes (Pflichtfeld)", { exact: true });
       await expect(first).toHaveAttribute("placeholder", "z. B. Emil");
       await first.fill("Emil");

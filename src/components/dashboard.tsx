@@ -217,7 +217,7 @@ export default function Dashboard() {
           <p className="privacy-note">Archivieren bewahrt vergangene Trainingslisten. Endgültiges Löschen entfernt das Kind auch aus allen vergangenen Trainings.</p>
         </section>}
       </>}
-      <footer className="site-footer">Am Ball · Gemeinsam auf dem Platz.<br /><span>Ein Teamzugang für Anwesenheit und Verwaltung.</span></footer>
+      <div className="site-footer">Am Ball · Gemeinsam auf dem Platz.<br /><span>Ein Teamzugang für Anwesenheit und Verwaltung.</span></div>
     </main>
   </div>;
 }

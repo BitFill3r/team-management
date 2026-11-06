@@ -13,12 +13,15 @@ for (const setup of [
     await page.setViewportSize({ width: setup.width, height: setup.height });
     await page.goto("/");
     await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByRole("contentinfo")).toHaveText("Powered by heydot.de - HEYDOT Agency - Eltville am Rhein");
+    await expect(page.getByRole("contentinfo").getByRole("link", { name: "heydot.de" })).toHaveAttribute("href", "https://www.heydot.de");
     await page.getByLabel("Team-Passwort").fill("wrong");
     await page.getByRole("button", { name: "Zum Training" }).click();
     await expect(page.locator(".error[role=alert]")).toContainText("nicht richtig");
     await page.getByLabel("Team-Passwort").fill("browser-test-password");
     await page.getByRole("button", { name: "Zum Training" }).click();
     await expect(page.getByRole("heading", { name: "Wer ist dabei?" })).toBeVisible();
+    await expect(page.getByRole("contentinfo")).toHaveText("Powered by heydot.de - HEYDOT Agency - Eltville am Rhein");
     expect(reads).toEqual(["/api/dashboard"]);
     await page.getByRole("button", { name: "Kinder verwalten", exact: true }).click();
     for (const name of [setup.first, setup.second]) {
