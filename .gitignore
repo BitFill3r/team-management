@@ -9,3 +9,4 @@ playwright-report/
 *.tsbuildinfo
 .neon
 .team-password.local
+.team-password.testing.local

@@ -8,8 +8,9 @@ Eine kleine, deutschsprachige Web-App für die Trainingsanwesenheit einer G-Juge
 - `www.fuss-am-ball.de` und die bisherige Adresse `am-ball-team-management.netlify.app` leiten mit erhaltenem Pfad auf die Hauptdomain weiter.
 - Netlify-Projekt: https://app.netlify.com/projects/am-ball-team-management/
 - GitHub: https://github.com/BitFill3r/team-management, Produktionsbranch `main` mit automatischen Netlify-Deployments.
+- Testumgebung: https://develop--am-ball-team-management.netlify.app, automatische Branch-Deployments ausschließlich für `develop`. Pull-Request-Deploy-Previews sind deaktiviert.
 - Datenbank: Neon-Projekt `team-management`, AWS Frankfurt. Die Netlify-Funktionen laufen derzeit in der voreingestellten Region US East (Ohio); die EU-Datenbankregion bedeutet daher keine ausschließlich europäische Verarbeitung.
-- Die vier App-Variablen sind ausschließlich für den Produktionskontext gesetzt, nicht für Branch-Deployments oder Deploy Previews.
+- Die produktiven App-Zugangsdaten sind ausschließlich im Produktionskontext gesetzt. `develop` hat eigene Testwerte; andere Branches und Deploy Previews erhalten keine produktiven Zugangsdaten.
 - Im aktuellen Netlify-Tarif werden reguläre Server-Umgebungsvariablen verwendet. Diese sind für berechtigte Netlify-Administratoren lesbar und gelten für die standardmäßig verfügbaren Scopes einschließlich Build und Funktionen. Sie sind keine öffentlichen `NEXT_PUBLIC_`-Variablen. Zugriff auf Team, Builds und Deploy-Konfiguration deshalb einschränken.
 - Die produktive Anmeldung, Datenabrufe, sicheren Sitzungscookies und Abmeldung wurden über HTTPS geprüft, ohne Kinder oder Trainingsdaten anzulegen.
 
@@ -99,6 +100,18 @@ npm run dev
 Die Anwendung ist unter `http://localhost:3000` erreichbar. Bei einem lokalen PostgreSQL ohne TLS kann die lokale Verbindungszeichenfolge `sslmode=disable` verwenden; nicht für Neon oder öffentliche Datenbanken verwenden.
 
 ## Auf Netlify veröffentlichen
+
+### Produktion und Testbranch
+
+`main` veröffentlicht auf `https://fuss-am-ball.de`. `develop` hat eine eigenständige Netlify-Adresse und verwendet einen dauerhaften, leeren Neon-Schema-Branch `testing` mit eigener eingeschränkter Datenbankrolle. Es werden keine Produktionsdaten kopiert. Die hostbezogene Weiterleitung in `netlify.toml` betrifft nur die alte Produktionsadresse, nicht die `develop--…`-Adresse.
+
+Die Netlify-Variablen sind nach Kontext getrennt: Produktion behält ihre Datenbank, Passwort-Hash, Session-Secret und `APP_ORIGIN=https://fuss-am-ball.de`. Der benannte Branchkontext `develop` enthält eigene Testwerte und `APP_ORIGIN=https://develop--am-ball-team-management.netlify.app`; beide nutzen `TRUST_NETLIFY_IP=true`. Keine produktiven Zugangsdaten als globale oder Preview-Fallbacks setzen. Bei weiteren freigegebenen Testbranches die exakte jeweilige Origin und ausschließlich Testzugangsdaten konfigurieren; diese können dieselbe Testdatenbank teilen.
+
+Das generierte Testpasswort liegt ausschließlich in der ignorierten `.team-password.testing.local`, die Testkonfiguration in `.env.testing.local` (jeweils Dateimodus 0600). Produktionsdateien bleiben unverändert. Testpasswort im Passwortmanager sichern; nicht in Git, Chat oder Buildlogs kopieren. Die Test-App bleibt passwortgeschützt; trotzdem ausschließlich fiktive Daten verwenden.
+
+Änderungen auf `develop` pushen, dort testen und anschließend bewusst nach `main` übernehmen. Ein Merge überträgt Code, keine Testdaten. Datenbankmigrationen weiterhin getrennt kontrolliert durchführen: erst gegen `testing`, dann bewusst gegen Produktion. Die eingeschränkte Test-App-Rolle hat keine DDL-/Migrationsrechte; Migrationen benötigen eine ausschließlich für diesen Testbranch verwendete Administratorverbindung. Nicht im allgemeinen Netlify-Build automatisch die Produktionsmigration starten.
+
+Der Schema-only-Branch übernimmt Tabellen und Indizes, aber keine Zeilen. Bei der Einrichtung wurden die Tabellenstruktur, Constraints, Indizes und der Migrationsstand mit Produktion abgeglichen und die übernommenen Schema-Migrationen als angewendet registriert. Die gemeinsame Testdatenbank wird nicht automatisch zurückgesetzt. Alte deploy-spezifische Vorschau-URLs sind keine zusätzlichen erlaubten Login-Origins; zum Testen die stabile Branch-Adresse verwenden.
 
 1. In Neon ein Projekt mit einer **EU-Region** anlegen. Eine eigene Datenbank für diese App verwenden. Die gepoolte Verbindungsadresse kopieren und TLS-Zertifikatsprüfung aktiv lassen. Zugang nur für die verantwortlichen Personen freigeben.
 2. Lokal `.env.local` mit dieser Datenbank und den erzeugten Geheimnissen füllen. `npm run db:migrate` ausführen. Das legt das Schema an, keine Kinderdaten. Vor späteren Migrationen eine Sicherung erstellen.
