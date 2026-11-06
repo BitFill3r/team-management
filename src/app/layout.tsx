@@ -11,7 +11,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return <html lang="de"><body>
     {children}
     <footer className="agency-footer">
-      Powered by <a href="https://www.heydot.de">heydot.de</a> - HEYDOT Agency - Eltville am Rhein
+      Powered by <a href="https://www.heydot.de" target="_blank" rel="noopener noreferrer">heydot.de</a> - HEYDOT Agency - Eltville am Rhein
     </footer>
   </body></html>;
 }

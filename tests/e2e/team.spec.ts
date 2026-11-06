@@ -15,6 +15,8 @@ for (const setup of [
     await expect(page).toHaveURL(/\/login$/);
     await expect(page.getByRole("contentinfo")).toHaveText("Powered by heydot.de - HEYDOT Agency - Eltville am Rhein");
     await expect(page.getByRole("contentinfo").getByRole("link", { name: "heydot.de" })).toHaveAttribute("href", "https://www.heydot.de");
+    await expect(page.getByRole("contentinfo").getByRole("link", { name: "heydot.de" })).toHaveAttribute("target", "_blank");
+    await expect(page.getByRole("contentinfo").getByRole("link", { name: "heydot.de" })).toHaveAttribute("rel", "noopener noreferrer");
     await page.getByLabel("Team-Passwort").fill("wrong");
     await page.getByRole("button", { name: "Zum Training" }).click();
     await expect(page.locator(".error[role=alert]")).toContainText("nicht richtig");
