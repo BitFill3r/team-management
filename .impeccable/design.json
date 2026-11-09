@@ -1,35 +1,15 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T08:04:50.365Z",
+  "generatedAt": "2026-11-09T08:39:54.736Z",
   "title": "Design System: Am Ball",
   "extensions": {
-    "colorMeta": {
-      "green": {
-        "role": "primary",
-        "displayName": "Spielfeldgrün",
-        "tonalRamp": ["oklch(15% 0.025 160)", "oklch(25% 0.05 160)", "oklch(35% 0.075 160)", "oklch(45% 0.09 160)", "oklch(58% 0.09 160)", "oklch(72% 0.075 160)", "oklch(85% 0.045 160)", "oklch(95% 0.015 160)"]
-      },
-      "lime": {
-        "role": "primary",
-        "displayName": "Limette",
-        "tonalRamp": ["oklch(15% 0.025 125)", "oklch(25% 0.05 125)", "oklch(35% 0.075 125)", "oklch(45% 0.10 125)", "oklch(58% 0.12 125)", "oklch(72% 0.13 125)", "oklch(85% 0.10 125)", "oklch(95% 0.03 125)"]
-      },
-      "paper": {
-        "role": "neutral",
-        "displayName": "Papier",
-        "tonalRamp": ["oklch(15% 0.005 115)", "oklch(25% 0.008 115)", "oklch(35% 0.01 115)", "oklch(45% 0.012 115)", "oklch(58% 0.013 115)", "oklch(72% 0.013 115)", "oklch(85% 0.012 115)", "oklch(95% 0.01 115)"]
-      }
-    },
-    "shadows": [
-      { "name": "card", "value": "0 8px 25px #173c3404", "purpose": "Sehr dezente Unterstützung der Kartenfläche." },
-      { "name": "active-tab", "value": "0 2px 6px #173c3410", "purpose": "Aktiven Tab innerhalb der Leiste unterscheiden." }
-    ],
+    "shadows": [],
     "motion": [
-      { "name": "attendance-background", "value": "background .15s ease", "purpose": "Bestehender Hintergrundwechsel der Teilnehmerzeile." }
+      { "name": "attendance-background", "value": "background .15s", "purpose": "Statuswechsel; bei reduzierter Bewegung deaktiviert." }
     ],
     "breakpoints": [
       { "name": "mobile", "value": "680px" },
-      { "name": "narrow-calendar", "value": "380px" }
+      { "name": "narrow-calendar", "value": "380px", "purpose": "Kompakter Kalenderdialog; Monatsfeld über zwei gleich breiten Pfeilbuttons." }
     ]
   },
   "components": [
@@ -37,83 +17,88 @@
       "name": "Primäre Aktion",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Primäre Aufgabenaktion mit vorhandenen Hover-, Fokus- und Disabled-Zuständen.",
+      "description": "Dunkelgrüne Aufgabenaktion.",
       "html": "<button class=\"ds-primary\">Training anlegen</button>",
-      "css": ".ds-primary{font:700 16px/1.5 Arial,Helvetica,sans-serif;min-height:46px;border:1px solid transparent;border-radius:12px;padding:11px 18px;background:var(--green,#176348);color:white;cursor:pointer}.ds-primary:hover:not(:disabled){filter:brightness(.93)}.ds-primary:focus-visible{outline:3px solid #aa6b16;outline-offset:3px}.ds-primary:disabled{opacity:.48;cursor:not-allowed}"
+      "css": ".ds-primary{font:700 16px/1.5 Arial,Helvetica,sans-serif;min-height:var(--control-height,48px);border:1px solid transparent;border-radius:var(--radius-control,6px);padding:11px 18px;background:var(--green,#24543e);color:var(--surface,#fffef9);cursor:pointer}.ds-primary:hover:not(:disabled){filter:brightness(.93)}.ds-primary:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-primary:disabled{opacity:.48;cursor:not-allowed}"
     },
     {
       "name": "Sekundäre Aktion",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Zurückhaltende Nebenaktion mit sichtbarem Rahmen.",
+      "description": "Nebenaktion mit sichtbarem Rahmen.",
       "html": "<button class=\"ds-secondary\">Aktualisieren</button>",
-      "css": ".ds-secondary{font:700 16px/1.5 Arial,Helvetica,sans-serif;min-height:46px;border:1px solid var(--line,#e0e7e0);border-radius:12px;padding:11px 18px;background:#f3f5ef;color:var(--ink,#173c34);cursor:pointer}.ds-secondary:hover:not(:disabled){filter:brightness(.93)}.ds-secondary:focus-visible{outline:3px solid #aa6b16;outline-offset:3px}.ds-secondary:disabled{opacity:.48;cursor:not-allowed}"
-    },
-    {
-      "name": "Textaktion",
-      "kind": "button",
-      "refersTo": "button-text",
-      "description": "Transparente Nebenaktion.",
-      "html": "<button class=\"ds-text\">Abmelden</button>",
-      "css": ".ds-text{font:700 .85rem/1.5 Arial,Helvetica,sans-serif;min-height:46px;border:1px solid transparent;border-radius:12px;padding:11px 18px;background:transparent;color:var(--muted,#597067);cursor:pointer}.ds-text:hover:not(:disabled){filter:brightness(.93)}.ds-text:focus-visible{outline:3px solid #aa6b16;outline-offset:3px}.ds-text:disabled{opacity:.48;cursor:not-allowed}"
+      "css": ".ds-secondary{font:700 16px/1.5 Arial,Helvetica,sans-serif;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:11px 18px;background:var(--surface-subtle,#efeee4);color:var(--ink,#20382e);cursor:pointer}.ds-secondary:hover:not(:disabled){filter:brightness(.93)}.ds-secondary:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-secondary:disabled{opacity:.48;cursor:not-allowed}"
     },
     {
       "name": "Textfeld",
       "kind": "input",
       "refersTo": "input",
-      "description": "Beschriftetes Namensfeld mit nativen Eingabezuständen.",
+      "description": "Gemeinsam beschriftetes Eingabefeld.",
       "html": "<label class=\"ds-label\">Neuer Vorname<input class=\"ds-input\" placeholder=\"Vorname\"></label>",
-      "css": ".ds-label{display:block;font:700 .88rem/1.5 Arial,Helvetica,sans-serif;color:var(--ink,#173c34)}.ds-input{display:block;box-sizing:border-box;width:100%;margin-top:6px;min-height:48px;border:1px solid #b6c8bc;border-radius:10px;padding:10px 12px;background:white;color:var(--ink,#173c34);font:400 16px/1.5 Arial,Helvetica,sans-serif}.ds-input:focus-visible{outline:3px solid #aa6b16;outline-offset:3px}.ds-input:disabled{background:#f0f3ee}"
+      "css": ".ds-label{display:block;font:700 var(--text-small,.875rem)/1.5 Arial,Helvetica,sans-serif;color:var(--ink,#20382e)}.ds-input{display:block;box-sizing:border-box;width:100%;margin-top:6px;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:10px 12px;background:var(--surface,#fffef9);color:var(--ink,#20382e);font:400 16px/1.5 Arial,Helvetica,sans-serif;caret-color:var(--green,#24543e)}.ds-input::placeholder{color:var(--muted,#526157);opacity:1}.ds-input:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-input:disabled{background:var(--surface-subtle,#efeee4)}"
     },
     {
-      "name": "Karte",
+      "name": "Mitteilungsfläche",
       "kind": "card",
       "refersTo": "card",
-      "description": "Weiße gerundete Inhaltsfläche mit sehr schwachem Schatten.",
-      "html": "<section class=\"ds-card\"><h2 class=\"ds-heading\">Wer ist dabei?</h2><p class=\"ds-copy\">Training und Anwesenheit verwalten.</p></section>",
-      "css": ".ds-card{background:white;border:1px solid var(--line,#e0e7e0);border-radius:22px;padding:30px;box-shadow:0 8px 25px #173c3404;color:var(--ink,#173c34);font:16px/1.5 Arial,Helvetica,sans-serif}.ds-heading{margin:0;font-size:1.8rem;letter-spacing:-.04em;line-height:1.2}.ds-copy{margin:16px 0 0}"
+      "description": "Flache Inhaltsfläche ohne Schatten.",
+      "html": "<section class=\"ds-panel\"><h2 class=\"ds-heading\">Wer ist dabei?</h2></section>",
+      "css": ".ds-panel{background:var(--surface,#fffef9);border:1px solid var(--line,#d5d9cd);border-radius:var(--radius-panel,10px);padding:var(--space-8,32px);color:var(--ink,#20382e)}.ds-heading{margin:0;font:650 1.75rem/1.25 var(--font-heading,\"Source Serif 4\"),Georgia,serif;letter-spacing:-.015em;text-wrap:balance}@media(max-width:680px){.ds-panel{padding:24px 16px}}"
     },
     {
-      "name": "Tabs",
+      "name": "Abschnittsband",
       "kind": "nav",
       "refersTo": "tabs",
-      "description": "Aktive und inaktive Navigation innerhalb einer hellen Leiste.",
-      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab ds-active\">Training</button><button class=\"ds-tab\">Verlauf</button></div>",
-      "css": ".ds-tabs{display:flex;gap:6px;padding:5px;background:#e9ede4;border-radius:15px}.ds-tab{flex:1;font:700 .9rem/1.5 Arial,Helvetica,sans-serif;min-height:46px;border:1px solid transparent;border-radius:12px;padding:10px;background:transparent;color:var(--muted,#597067);cursor:pointer}.ds-active{background:white;color:var(--ink,#173c34);box-shadow:0 2px 6px #173c3410}.ds-tab:hover:not(:disabled){filter:brightness(.93)}.ds-tab:focus-visible{outline:3px solid #aa6b16;outline-offset:3px}"
+      "description": "Navigation mit heller aktiver Auswahl.",
+      "html": "<div class=\"ds-tabs\" role=\"group\" aria-label=\"Darstellung\"><button class=\"ds-tab ds-active\" aria-pressed=\"true\">Tabelle</button><button class=\"ds-tab\" aria-pressed=\"false\">Tagesliste</button></div>",
+      "css": ".ds-tabs{display:flex;gap:var(--space-1,4px);padding:var(--space-2,8px);background:var(--green,#24543e);border-radius:var(--radius-control,6px)}.ds-tab{flex:1;font:700 .9375rem/1.5 Arial,Helvetica,sans-serif;min-height:var(--control-height,48px);border:1px solid transparent;border-radius:var(--radius-control,6px);padding:10px;background:transparent;color:var(--surface,#fffef9);cursor:pointer}.ds-active{background:var(--surface,#fffef9);color:var(--green,#24543e)}.ds-tab:hover:not(:disabled){filter:brightness(.93)}.ds-tab:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-tab:disabled{opacity:.48;cursor:not-allowed}@media(max-width:680px){.ds-tabs{flex-wrap:wrap;gap:4px}.ds-tab{flex-basis:calc(50% - 2px);font-size:var(--text-small,.875rem);padding:10px 6px}}"
     },
     {
-      "name": "Pill",
+      "name": "Kennzeichnung",
       "kind": "chip",
       "refersTo": "pill",
-      "description": "Nicht interaktive kompakte Kennzeichnung.",
+      "description": "Ruhige nicht interaktive Kennzeichnung.",
       "html": "<span class=\"ds-pill\">Aktiv</span>",
-      "css": ".ds-pill{display:inline-block;background:#edf3e6;color:var(--ink,#173c34);padding:6px 12px;font:.8rem/1.5 Arial,Helvetica,sans-serif;border-radius:20px;white-space:nowrap}"
+      "css": ".ds-pill{display:inline-block;background:var(--surface-subtle,#efeee4);color:var(--ink,#20382e);padding:6px 12px;font:var(--text-small,.875rem)/1.5 Arial,Helvetica,sans-serif;border-radius:var(--radius-control,6px);white-space:nowrap}"
+    },
+    {
+      "name": "Monatsnavigation / ActionIcon",
+      "kind": "custom",
+      "description": "Natives Monatsfeld zwischen gemeinsamen SVG-Aktionen; bis 380px volle Feldzeile über separaten, gleich breiten Pfeilen.",
+      "html": "<div class=\"ds-month-navigation\"><button class=\"ds-month-arrow\" type=\"button\" aria-label=\"Vorheriger Monat\"><svg class=\"ds-action-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M15 6l-6 6 6 6\" /></svg></button><div class=\"ds-month-field\"><label class=\"ds-month-label\" for=\"ds-overview-month\">Monat</label><input class=\"ds-month-input\" id=\"ds-overview-month\" type=\"month\" min=\"2000-01\" max=\"2100-12\" value=\"2026-11\"></div><button class=\"ds-month-arrow\" type=\"button\" aria-label=\"Nächster Monat\"><svg class=\"ds-action-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M9 6l6 6-6 6\" /></svg></button></div>",
+      "css": ".ds-month-navigation{display:flex;align-items:end;gap:10px;margin:24px 0 18px;color:var(--ink,#20382e);font:400 16px/1.5 Arial,Helvetica,sans-serif}.ds-month-field{flex:1;min-width:0;max-width:240px}.ds-month-label{display:block;margin-bottom:6px;font-size:var(--text-small,.875rem);font-weight:700}.ds-month-input{box-sizing:border-box;width:100%;min-width:0;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:10px 12px;color:var(--ink,#20382e);background:var(--surface,#fffef9);font:400 16px/1.5 Arial,Helvetica,sans-serif;caret-color:var(--green,#24543e)}.ds-month-arrow{min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:11px 18px;color:var(--ink,#20382e);background:var(--surface-subtle,#efeee4);font:700 16px/1.5 Arial,Helvetica,sans-serif;cursor:pointer}.ds-action-icon{width:20px;height:20px;vertical-align:middle}.ds-month-arrow:hover:not(:disabled){filter:brightness(.93)}.ds-month-arrow:focus-visible,.ds-month-input:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-month-arrow:disabled{opacity:.48;cursor:not-allowed}.ds-month-input:disabled{background:var(--surface-subtle,#efeee4)}@media(max-width:380px){.ds-month-navigation{flex-wrap:wrap}.ds-month-field{flex:1 0 100%;max-width:none;order:-1}.ds-month-arrow{flex:1}}"
     },
     {
       "name": "Anwesenheitszeile",
       "kind": "custom",
       "refersTo": "participant-present",
-      "description": "Fiktiver anwesender Teilnehmer mit beschriftetem Checkbox-Ziel.",
-      "html": "<label class=\"ds-participant\"><span class=\"ds-avatar\">E</span><span class=\"ds-name\">Emil</span><input class=\"ds-check\" type=\"checkbox\" checked aria-label=\"Emil: anwesend\"></label>",
-      "css": ".ds-participant{display:flex;align-items:center;gap:13px;padding:15px;min-height:80px;border:1px solid #9ebb85;border-radius:14px;background:#f0f7e9;color:var(--ink,#173c34);font:700 16px/1.5 Arial,Helvetica,sans-serif;cursor:pointer;transition:background .15s}.ds-avatar{display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;border-radius:50%;background:#d6e8c1;color:#365b28;font-size:1.1rem}.ds-name{flex:1;overflow-wrap:anywhere}.ds-check{width:26px;height:26px;margin:0;accent-color:var(--green,#176348);cursor:pointer}.ds-check:focus-visible{outline:3px solid #aa6b16;outline-offset:3px}"
+      "description": "Großes beschriftetes Checkbox-Ziel mit Linie, Initiale und zusätzlicher Anwesenheitsfläche.",
+      "html": "<label class=\"ds-participant ds-present\"><span class=\"ds-avatar\" aria-hidden=\"true\">E</span><span class=\"ds-participant-name\">Emil</span><input class=\"ds-attendance-check\" type=\"checkbox\" checked aria-label=\"Emil: anwesend\"></label>",
+      "css": ".ds-participant{display:flex;align-items:center;gap:var(--space-3,12px);margin:0;padding:16px 12px;border:0;border-bottom:1px solid var(--line,#d5d9cd);border-radius:0;min-height:76px;color:var(--ink,#20382e);font:700 var(--text-small,.875rem)/1.5 Arial,Helvetica,sans-serif;cursor:pointer;transition:background .15s}.ds-present{background:var(--surface-present,#e9f1e5)}.ds-avatar{flex-shrink:0;width:36px;height:36px;display:grid;place-items:center;border-radius:var(--radius-control,6px);background:var(--green,#24543e);color:var(--surface,#fffef9);font-size:1rem}.ds-participant-name{flex:1;overflow-wrap:anywhere;font-size:1rem}.ds-attendance-check{width:26px;height:26px;min-height:26px;margin:0;flex-shrink:0;accent-color:var(--green,#24543e);cursor:pointer}.ds-attendance-check:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-attendance-check[aria-disabled=\"true\"]{cursor:wait;opacity:.6}@media(max-width:680px){.ds-participant{min-height:74px}}@media(prefers-reduced-motion:reduce){.ds-participant{transition:none}}"
     }
   ],
   "narrative": {
-    "northStar": "Am Spielfeldrand",
-    "overview": "Ruhig, freundlich und praktisch; klare Aufgaben statt dekorativer Inszenierung. Die bestehende Oberfläche verbindet dunkles Grün, helle papierartige Flächen und eine vertraute serifenlose Schrift mit griffigen, unkomplizierten Bedienelementen.\n\nGroße Schaltflächen, gerundete Karten und klar beschriftete Felder prägen das System. Es bleibt überwiegend flach: helle Flächen und Linien strukturieren die App; sehr dezente Schatten unterstützen Karten und aktive Tabs, nicht schwebende Effekte.",
-    "keyCharacteristics": ["Dunkelgrüne Aktionen auf hellen Flächen.", "Gerundete, gut erkennbare Bedienelemente.", "Klare Rückmeldungen für Anwesenheit, Speicherung und Fehler.", "Einspaltige Teilnehmerliste auf dem Handy."],
+    "northStar": "Vereinsmitteilung",
+    "overview": "Die vom Nutzer gewählte Ersatzrichtung verbindet warmes Papier, grüne Abschnittsbänder und ruhig gegliederte Listen. Eine lokale Serifenschrift gibt Überschriften den Charakter einer Vereinsmitteilung; vertraute serifenlose Schrift hält Eingaben und Aufgaben gut lesbar.\n\nDie Oberfläche unterstützt schnelle Anwesenheitserfassung am Handy. Kleine Radien, feine horizontale Linien und flache Flächen ersetzen die frühere weiche Kartenlandschaft. Produkttexte, Abläufe und der Agency-Footer bleiben erhalten.",
+    "keyCharacteristics": [
+      "Warmes Papier mit klar getrennten Inhaltsflächen.",
+      "Grüne Navigationsbänder und gut erkennbare aktive Auswahl.",
+      "Serifische Überschriften, sachliche Formularschrift.",
+      "Gegliederte Teilnehmer- und Antwortlisten statt verschachtelter Karten."
+    ],
     "rules": [],
     "dos": [
-      "**Do** Aktionsgrün, Anwesenheit und Fehlerzustände entsprechend ihren bestehenden Rollen verwenden.",
-      "**Do** Fokus, Beschriftungen und textliche Speicherzustände erhalten.",
-      "**Do** Mobile-Umbruch und internes Tabellen-/Dialogscrollen berücksichtigen.",
-      "**Do** den bestätigten Agency-Footer erhalten."
+      "**Do** gemeinsame semantische CSS-Tokens für neue Flächen verwenden.",
+      "**Do** schnelle Anwesenheitserfassung und sichtbare Zustände erhalten.",
+      "**Do** Hilfstexte, Fokus, Formulare und Mobile-Umbruch gemeinsam prüfen.",
+      "**Do** neue Gruppen durch Aufgaben und horizontale Linien gliedern.",
+      "**Do** gemeinsame SVG-Aktionen und die zweizeilige Monatsnavigation bis 380px erhalten."
     ],
     "donts": [
-      "**Don't** Anwesenheit oder Fehler ausschließlich durch Farbe kommunizieren.",
-      "**Don't** lokale Login-/Markeneffekte ungeprüft auf jede Fläche übertragen.",
-      "**Don't** dekorative Inszenierung an die Stelle klarer Aufgaben setzen.",
-      "**Don't** eine formale Barrierefreiheitskonformität aus dieser Bestandsdokumentation ableiten."
+      "**Don't** neue Seiten mit dekorativen Innenkarten oder riesigen Hero-Blöcken aufbauen.",
+      "**Don't** Farbe als einzigen Statusindikator verwenden.",
+      "**Don't** Produkttexte oder Passwort-/Datentrennung als Designnebenwirkung ändern.",
+      "**Don't** externe Fonts zur Laufzeit nachladen."
     ]
   }
 }

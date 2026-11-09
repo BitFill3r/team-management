@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { displayDate, today } from "@/lib/client";
 import { clampDate, firstDate, lastDate, monthDays, shiftDay, shiftMonth } from "@/lib/calendar";
+import ActionIcon from "./action-icon";
 
 const months = Array.from({ length: 12 }, (_, index) =>
   new Intl.DateTimeFormat("de-DE", { month: "long", timeZone: "UTC" }).format(new Date(Date.UTC(2026, index, 1))));
@@ -66,11 +67,11 @@ export default function TrainingDatePicker({ value, trainingDates, disabled, onC
       aria-describedby={`${id}-legend`} onClose={() => setOpen(false)}>
       <div className="calendar-heading">
         <h3 id={`${id}-title`}>Trainingsdatum wählen</h3>
-        <button type="button" className="secondary" aria-label="Kalender schließen" onClick={() => dialog.current?.close()}>×</button>
+        <button type="button" className="secondary" aria-label="Kalender schließen" onClick={() => dialog.current?.close()}><ActionIcon name="close" /></button>
       </div>
       <div className="calendar-navigation">
         <button type="button" className="secondary" aria-label="Vorheriger Monat" disabled={month === firstDate.slice(0, 7)}
-          onClick={() => navigateMonth(shiftMonth(`${month}-01`, -1).slice(0, 7))}>‹</button>
+          onClick={() => navigateMonth(shiftMonth(`${month}-01`, -1).slice(0, 7))}><ActionIcon name="left" /></button>
         <div><label className="sr-only" htmlFor={`${id}-month`}>Kalendermonat</label>
           <select id={`${id}-month`} value={month.slice(5)} onChange={(event) => navigateMonth(`${month.slice(0, 4)}-${event.target.value}`)}>
             {months.map((name, index) => <option key={name} value={String(index + 1).padStart(2, "0")}>{name}</option>)}
@@ -80,7 +81,7 @@ export default function TrainingDatePicker({ value, trainingDates, disabled, onC
             {Array.from({ length: 101 }, (_, index) => <option key={index} value={2000 + index}>{2000 + index}</option>)}
           </select></div>
         <button type="button" className="secondary" aria-label="Nächster Monat" disabled={month === lastDate.slice(0, 7)}
-          onClick={() => navigateMonth(shiftMonth(`${month}-01`, 1).slice(0, 7))}>›</button>
+          onClick={() => navigateMonth(shiftMonth(`${month}-01`, 1).slice(0, 7))}><ActionIcon name="right" /></button>
       </div>
       <p className="sr-only" aria-live="polite">{months[Number(month.slice(5)) - 1]} {month.slice(0, 4)}</p>
       <table className="calendar-grid" aria-label={`${months[Number(month.slice(5)) - 1]} ${month.slice(0, 4)}`}>

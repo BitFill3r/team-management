@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api, displayDate, errorMessage } from "@/lib/client";
 import { monthSchema } from "@/lib/validation";
 import type { MonthlyOverview, OverviewParticipant } from "@/lib/types";
+import ActionIcon from "./action-icon";
 
 function monthLabel(month: string) {
   return new Intl.DateTimeFormat("de-DE", { month: "long", year: "numeric", timeZone: "UTC" })
@@ -53,7 +54,7 @@ export default function AttendanceOverview({ month, onMonthChange, onOpenTrainin
     new Map<string, OverviewParticipant>(training.participants.map((child) => [child.id, child])));
 
   return <section className="card">
-    <div className="section-heading"><div><p className="eyebrow">UNSERE TRAININGSTAGE</p><h2>Trainingsverlauf</h2></div>
+    <div className="section-heading"><div><h2>Trainingsverlauf</h2><p className="context-note">UNSERE TRAININGSTAGE</p></div>
       <button className="secondary" disabled={loading} onClick={() => {
         setLoading(true); setError(""); setResult(null); setRefresh((value) => value + 1);
       }}>Aktualisieren</button>
@@ -61,12 +62,12 @@ export default function AttendanceOverview({ month, onMonthChange, onOpenTrainin
     <p className="muted">Wer war wann dabei? Zum Korrigieren einen Trainingstag öffnen.</p>
     <div className="month-navigation">
       <button className="secondary" aria-label="Vorheriger Monat" disabled={month === "2000-01"}
-        onClick={() => chooseMonth(adjacentMonth(month, -1))}>←</button>
+        onClick={() => chooseMonth(adjacentMonth(month, -1))}><ActionIcon name="left" /></button>
       <div><label htmlFor="overview-month">Monat</label>
         <input id="overview-month" type="month" min="2000-01" max="2100-12" value={month}
           onChange={(event) => { if (event.target.value) chooseMonth(event.target.value); }} /></div>
       <button className="secondary" aria-label="Nächster Monat" disabled={month === "2100-12"}
-        onClick={() => chooseMonth(adjacentMonth(month, 1))}>→</button>
+        onClick={() => chooseMonth(adjacentMonth(month, 1))}><ActionIcon name="right" /></button>
     </div>
     <div className="tabs overview-tabs" role="group" aria-label="Darstellung">
       <button aria-pressed={view === "table"} className={view === "table" ? "active" : ""} onClick={() => setView("table")}>Tabelle</button>

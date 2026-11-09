@@ -1,237 +1,208 @@
 ---
 name: Am Ball
-description: Ruhige, freundliche und praktische Trainingsverwaltung am Spielfeldrand.
+description: Vereinsmitteilung — warmes Papier, grüne Abschnittsbänder und klar gegliederte Listen.
 colors:
-  green: "#176348"
-  lime: "#d3ef86"
-  ink: "#173c34"
-  muted: "#597067"
-  line: "#e0e7e0"
-  paper: "#f5f6ef"
-  white: "#ffffff"
-  focus: "#aa6b16"
-  input-border: "#b6c8bc"
-  secondary-bg: "#f3f5ef"
-  tabs-bg: "#e9ede4"
-  present-bg: "#f0f7e9"
-  present-border: "#9ebb85"
-  danger: "#a52e32"
-  error-text: "#8d292d"
-  error-bg: "#fff1ef"
-  error-border: "#e8bbb5"
-  pill-bg: "#edf3e6"
+  green: "#24543e"
+  lime: "#edf1da"
+  ink: "#20382e"
+  muted: "#526157"
+  line: "#d5d9cd"
+  paper: "#f6f3e9"
+  surface: "#fffef9"
+  surface-subtle: "#efeee4"
+  surface-present: "#e9f1e5"
+  control-border: "#7b897e"
+  focus: "#86530e"
+  danger: "#a12e32"
+  error-bg: "#fff0ed"
+  error-text: "#862c30"
+  error-border: "#c78580"
 typography:
   display:
-    fontFamily: "Arial, Helvetica, sans-serif"
-    fontSize: "clamp(2.4rem, 6vw, 3.8rem)"
-    fontWeight: 700
-    lineHeight: 1.06
-    letterSpacing: "-0.055em"
+    fontFamily: "Source Serif 4, Georgia, serif"
+    fontSize: "clamp(2rem, 4vw, 3rem)"
+    fontWeight: 650
+    lineHeight: 1.15
+    letterSpacing: "-0.02em"
   headline:
-    fontFamily: "Arial, Helvetica, sans-serif"
-    fontSize: "1.8rem"
-    fontWeight: 700
-    lineHeight: 1.2
-    letterSpacing: "-0.04em"
-  title:
-    fontFamily: "Arial, Helvetica, sans-serif"
-    fontSize: "1.06rem"
-    fontWeight: 700
-    lineHeight: 1.5
+    fontFamily: "Source Serif 4, Georgia, serif"
+    fontSize: "1.75rem"
+    fontWeight: 650
+    lineHeight: 1.25
+    letterSpacing: "-0.015em"
   body:
     fontFamily: "Arial, Helvetica, sans-serif"
     fontSize: "16px"
     fontWeight: 400
     lineHeight: 1.5
+  title:
+    fontFamily: "Arial, Helvetica, sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 700
+    lineHeight: 1.5
+  navigation:
+    fontFamily: "Arial, Helvetica, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 700
+    lineHeight: 1.5
   label:
     fontFamily: "Arial, Helvetica, sans-serif"
-    fontSize: "0.88rem"
+    fontSize: "0.875rem"
     fontWeight: 700
     lineHeight: 1.5
 rounded:
-  field: "10px"
-  button: "12px"
-  participant: "14px"
-  tabs: "15px"
-  card-mobile: "18px"
-  pill: "20px"
-  card: "22px"
+  control: "6px"
+  panel: "10px"
 spacing:
-  gap-small: "8px"
-  gap: "12px"
-  inset-mobile: "16px"
-  section: "24px"
-  card: "30px"
-  inset-desktop: "32px"
+  "1": "4px"
+  "2": "8px"
+  "3": "12px"
+  "4": "16px"
+  "6": "24px"
+  "8": "32px"
 components:
   button-primary:
     backgroundColor: "{colors.green}"
-    textColor: "{colors.white}"
-    rounded: "{rounded.button}"
+    textColor: "{colors.surface}"
+    rounded: "{rounded.control}"
     padding: "11px 18px"
+    height: "48px"
   button-secondary:
-    backgroundColor: "{colors.secondary-bg}"
+    backgroundColor: "{colors.surface-subtle}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.button}"
+    rounded: "{rounded.control}"
     padding: "11px 18px"
-  button-text:
-    backgroundColor: "transparent"
-    textColor: "{colors.muted}"
-    rounded: "{rounded.button}"
-    padding: "11px 18px"
+    height: "48px"
   input:
-    backgroundColor: "{colors.white}"
+    backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.field}"
+    rounded: "{rounded.control}"
     padding: "10px 12px"
-    width: "100%"
+    height: "48px"
   card:
-    backgroundColor: "{colors.white}"
+    backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.card}"
-    padding: "30px"
+    rounded: "{rounded.panel}"
+    padding: "32px"
   tabs:
-    backgroundColor: "{colors.tabs-bg}"
-    rounded: "{rounded.tabs}"
-    padding: "5px"
+    backgroundColor: "{colors.green}"
+    rounded: "{rounded.control}"
+    padding: "8px"
   pill:
-    backgroundColor: "{colors.pill-bg}"
-    rounded: "{rounded.pill}"
+    backgroundColor: "{colors.surface-subtle}"
+    rounded: "{rounded.control}"
     padding: "6px 12px"
-  participant:
-    backgroundColor: "transparent"
-    rounded: "{rounded.participant}"
-    padding: "15px"
   participant-present:
-    backgroundColor: "{colors.present-bg}"
-    rounded: "{rounded.participant}"
-    padding: "15px"
+    backgroundColor: "{colors.surface-present}"
+    textColor: "{colors.ink}"
+    padding: "16px 12px"
+  action-icon:
+    width: "20px"
+    height: "20px"
 ---
 
 # Design System: Am Ball
 
 ## Overview
 
-**Creative North Star: "Am Spielfeldrand"**
+**Creative North Star: "Vereinsmitteilung"**
 
-Ruhig, freundlich und praktisch; klare Aufgaben statt dekorativer Inszenierung. Die bestehende Oberfläche verbindet dunkles Grün, helle papierartige Flächen und eine vertraute serifenlose Schrift mit griffigen, unkomplizierten Bedienelementen.
+Die vom Nutzer gewählte Ersatzrichtung verbindet warmes Papier, grüne Abschnittsbänder und ruhig gegliederte Listen. Eine lokale Serifenschrift gibt Überschriften den Charakter einer Vereinsmitteilung; vertraute serifenlose Schrift hält Eingaben und Aufgaben gut lesbar.
 
-Große Schaltflächen, gerundete Karten und klar beschriftete Felder prägen das System. Es bleibt überwiegend flach: helle Flächen und Linien strukturieren die App; sehr dezente Schatten unterstützen Karten und aktive Tabs, nicht schwebende Effekte.
+Die Oberfläche unterstützt schnelle Anwesenheitserfassung am Handy. Kleine Radien, feine horizontale Linien und flache Flächen ersetzen die frühere weiche Kartenlandschaft. Produkttexte, Abläufe und der Agency-Footer bleiben erhalten.
 
 **Key Characteristics:**
-- Dunkelgrüne Aktionen auf hellen Flächen.
-- Gerundete, gut erkennbare Bedienelemente.
-- Klare Rückmeldungen für Anwesenheit, Speicherung und Fehler.
-- Einspaltige Teilnehmerliste auf dem Handy.
-
-Dokumentierter Iststand aus [globals.css](./src/app/globals.css), den bestehenden Komponenten und einer Stichprobe berechneter Styles der deployten Loginseite. Keine Umgestaltung und kein Qualitätsaudit; nicht jede deklarierte Kleinschrift ist eine allgemeine Empfehlung für neue Inhalte.
+- Warmes Papier mit klar getrennten Inhaltsflächen.
+- Grüne Navigationsbänder und gut erkennbare aktive Auswahl.
+- Serifische Überschriften, sachliche Formularschrift.
+- Gegliederte Teilnehmer- und Antwortlisten statt verschachtelter Karten.
 
 ## Colors
 
-Die Palette verbindet Spielfeldgrün mit Limette und hellen, leicht grünlichen Neutralflächen.
+Die semantischen CSS-Variablen in [globals.css](./src/app/globals.css) sind die Implementierungsquelle. Frontmatter dokumentiert ihre Werte; neue Oberflächen verwenden dieselben Variablen.
 
 ### Primary
-- **Spielfeldgrün** (`green`): primäre Aktionen, ausgewählte Kalendertage, Anwesenheit und Footer-Link.
-- **Limette** (`lime`): Schrift im dunklen AB-Markenfeld; kein allgemeiner Aktionshintergrund.
+- `green`: Aktionen, Navigation, Links, Auswahl.
+- `lime`: helle Schriftfläche der AB-Marke.
 
 ### Neutral
-- **Dunkle Tinte** (`ink`): Haupttext.
-- **Gedämpftes Grün** (`muted`): Hilfstexte, ungewählte Tabs und Footer.
-- **Papier** (`paper`): Seitenhintergrund.
-- **Weiß** (`white`): Karten, Eingaben und aktive Tabs.
-- **Trennlinie** (`line`): Rahmen und Abschnittsgrenzen.
+- `paper`: warmes Seitenpapier.
+- `surface`: helle Inhalts- und Formularfläche.
+- `surface-subtle`: ruhige Gruppierung, Tabellenköpfe und sekundäre Aktionen.
+- `ink` und `muted`: Haupt- und Hilfstexte.
+- `line`: Strukturgrenzen; `control-border`: sichtbare Eingaberahmen.
 
-Anwesenheit verwendet `present-bg` und `present-border`. Fehler verwenden `error-text`, `error-bg` und `error-border`; destruktive Aktionen `danger`. Die bernsteinfarbene Fokusmarkierung (`focus`) bleibt unabhängig vom Aktionsgrün sichtbar. Weitere lokale Farbabstufungen stehen im Stylesheet; sie sind keine zusätzliche globale Palette.
-
-Die Farbrampen im Sidecar sind synthetische Vorschauen für Spielfeldgrün, Limette und Papier, keine im App-Code implementierten Farbskalen. Maßgeblich bleiben die oben extrahierten Farbwerte.
+`surface-present` unterstützt Anwesenheit, aber ersetzt kein Häkchen. Fehler verwenden `error-text`, `error-bg` und `error-border`; destruktive Aktionen `danger`. Fokus bleibt bernsteinfarben und deutlich sichtbar.
 
 ## Typography
 
-**Display Font / Body Font:** Arial, Helvetica, sans-serif. Keine extern geladenen Schriftdateien.
+Source Serif 4 wird in [layout.tsx](./src/app/layout.tsx) lokal über `next/font/local`, `--font-heading` und `display: swap` eingebunden. [source-serif-4.ttf](./public/fonts/source-serif-4.ttf) und [SIL OFL 1.1](./public/fonts/OFL.txt) liegen im Projekt; keine Laufzeit-Anfrage an einen externen Fontdienst.
 
-Die Hierarchie entsteht durch Größe, Gewicht und kompakte Überschriftenlaufweite, nicht durch einen Schriftwechsel.
+h1/h2 verwenden die Serifenschrift, Gewicht 650, moderate negative Laufweite und balancierten Umbruch. Login-h1 ist 3rem; öffentliche Umfragen verwenden `clamp(1.8rem, 6vw, 2.8rem)`.
 
-### Hierarchy
-- **Display:** globale h1 nach Frontmatter; Login überschreibt die Größe mit `3.4rem`, öffentliche Umfragen mit `clamp(1.8rem, 6vw, 2.8rem)`.
-- **Headline:** h2 nach Frontmatter.
-- **Title:** h3 nach Frontmatter.
-- **Body:** 16px, Zeilenhöhe 1.5.
-- **Label:** 0.88rem und fett. Lokale Formularlabels und Hilfstexte sind teilweise kleiner.
-- **Eyebrow:** 0.68rem, Gewicht 700, Laufweite 0.14em.
-- **Brand:** 1.4rem, Gewicht 800, Laufweite -0.06em.
+Formulare und Fließtext bleiben Arial/Helvetica/sans-serif bei 16px und 1.5 Zeilenhöhe. Wiederkehrende Hilfstexte, Labels und Footer verwenden `--text-small` (0.875rem); mobile Navigation ebenfalls.
 
-Footer und Hinweise verwenden meist 0.75-0.8rem. Diese Werte beschreiben den Bestand; sie ersetzen keine Kontrast- oder Lesbarkeitsprüfung.
+Absätze sind auf 72ch begrenzt. Monatsübersicht, Anwesenheitssumme und Umfragezählungen verwenden tabellarische Ziffern. Lange Namen und Umfrageantworten umbrechen.
 
 ## Layout
 
-Die Teamansicht nutzt einen maximal 1000px breiten, zentrierten Container mit 32px seitlichem Padding. Kopfzeile und Abschnittsköpfe verteilen Inhalte per Flexbox. Teilnehmer stehen in zwei gleich breiten Spalten mit 12px Abstand.
+Teamcontainer: 1040px maximal, volle verfügbare Breite, 32px seitliches Padding. Karten: 32px Padding. Der Kopfbereich bleibt kompakter als die alte Hero-Fläche. Navigation bildet ein zusammenhängendes grünes Band.
 
-Bis 680px: Containerpadding 16px; Kartenpadding 20px 16px; Kartenradius 18px. Teilnehmer stehen einspaltig mit 10px Abstand und mindestens 74px Zeilenhöhe statt 80px. Die Tabs umbrechen auf zwei Schaltflächen pro Zeile; Verwaltungsformulare und Kartenabschluss ordnen sich vertikal an.
+Bis 680px: 16px Containerpadding, 24px 16px Kartenpadding, zweizeilige Navigation und einspaltige Teilnehmerliste. Verwaltungsformulare ordnen sich vertikal an. Speicherhinweise dürfen umbrechen.
 
-Der Loginbereich ist mindestens 100dvh hoch und zentriert seine maximal 430px breite Karte. Der globale Agency-Footer folgt im normalen Dokumentfluss und ist nicht fixiert. Öffentliche Umfragen nutzen einen maximal 700px breiten Container mit 32px 16px Padding.
+Teilnehmerliste: zwei Spalten auf Desktop, einspaltig auf Mobile; horizontale Trennlinien statt Einzelkarten. Öffentliche Umfragen sind maximal 740px breit. Login nutzt eine maximal 460px breite Mitteilungsfläche.
 
-Der Kalenderdialog ist höchstens 420px breit, lässt 16px Außenabstand und begrenzt seine Höhe auf `calc(100dvh - 16px)` mit internem Scrollen. Bis 380px reduziert sich das Innenpadding auf 10px 4px. Die Monatsübersicht scrollt bei Bedarf horizontal, während die Namensspalte links stehen bleibt.
+Body ist ein vertikales Flexlayout mit mindestens 100dvh. Footer folgt dem Inhalt und bleibt auf kurzen Seiten unten, ohne Inhalte zu überdecken. Monatsübersichten scrollen intern horizontal mit stehender Namensspalte. Kalenderdialog bleibt viewportbegrenzt und intern scrollbar.
+
+Monatsnavigation: natives `input[type="month"]` zwischen separaten Pfeilbuttons; Feldgruppe sonst maximal 240px breit. Bis einschließlich 380px steht das beschriftete Feld ohne Maximalbreite über den Pfeilen und nutzt die volle Zeile; beide Pfeilbuttons teilen die nächste Zeile gleichmäßig. Der Kalenderdialog hat am selben Breakpoint eigenes kompaktes Padding (10px 4px); seine Monats-/Jahresselects bleiben getrennt.
 
 ## Elevation & Depth
 
-Überwiegend flach: helle Flächen und Linien strukturieren die App; sehr dezente Schatten unterstützen Karten und aktive Tabs, nicht schwebende Effekte.
-
-### Shadow Vocabulary
-- **Karte:** `0 8px 25px #173c3404`.
-- **Aktiver Tab:** `0 2px 6px #173c3410`.
-
-Der Kalender trennt sich durch einen Backdrop `#173c3466` ab. Der Loginhintergrund verwendet einen radialen Verlauf von `#e1ebd6` nach transparent. Beides sind bestehende lokale Behandlungen, keine universellen Hintergrundrezepte.
+Flächen und Linien vermitteln Tiefe; Hauptkarten und Tabs verwenden keine Schatten. Kalenderbackdrop `#20382e66` trennt den fokussierten Dialog ab. Kein dekorativer Loginverlauf oder schwebender Badge.
 
 ## Shapes
 
-Buttons: 12px Radius; Eingaben: 10px; Teilnehmerzeilen: 14px; Karten: 22px beziehungsweise 18px auf Mobile. Die meisten Rahmen sind 1px stark.
-
-Die AB-Marke ist ein gerundetes 60px-Quadrat, um -5 Grad gedreht; die kleine Kopfzeilenvariante misst 36px. Das Mannschaftsabzeichen ist eine gerundete Schildform mit 7 Grad Drehung. Avatare sind kreisförmig und 42px groß.
+`--radius-control`: 6px für Schaltflächen, Eingaben, Markenfeld und Gruppen. `--radius-panel`: 10px für Hauptflächen und Kalender. Teilnehmerzeilen, Antwortlisten und Umfragefeldgruppen sind linear gegliedert, nicht gerundete Innenkarten.
 
 ## Components
 
-### Buttons
+### Buttons / Fields
 
-Griffig und unkompliziert. Primär grün mit weißer, fetter Schrift, mindestens 46px hoch, Padding 11px 18px. Sekundär mit hellem Hintergrund und sichtbarem Rahmen; Textbuttons transparent. Hover nutzt `brightness(.93)`, sofern nicht deaktiviert. Disabled nutzt Opazität .48 und einen nicht erlaubten Cursor.
+Gemeinsame Kontrolle über `--control-height` (48px Mindesthöhe), `--radius-control` und `--control-border` aus `globals.css`. Die Frontmatter-Höhe beschreibt dieses Minimum, keine feste Höhe. Primär dunkelgrün, sekundär zurückhaltend mit sichtbarem Rahmen. Eingaben, die implementierten Selects und Textareas teilen Schrift, Farben und Fokus; Textareas beginnen bei 100px und sind vertikal skalierbar. Checkboxen bleiben bewusst kleiner (26px Anwesenheit, 24px Umfragen) innerhalb ihrer beschrifteten Ziele. Placeholder sind explizit `muted`, nicht browserabhängig aufgehellt.
 
-### Inputs / Fields
+Hover: bestehendes `brightness(.93)`; Disabled: Opazität .48 und korrekter Cursor. Disabled ist kein Erfolgszustand.
 
-Weiße Fläche, Rahmen `input-border`, mindestens 48px hoch. Labels stehen darüber. Deaktivierte Texteingaben verwenden `#f0f3ee`. Checkboxen der Anwesenheit sind 26px groß; Formularcheckboxen in Umfragen 24px. Textarea und Select übernehmen Schrift und grüne Textfarbe.
+### ActionIcon
 
-### Cards / Containers
+[ActionIcon](./src/components/action-icon.tsx) ist die gemeinsame SVG-Komponente für links, rechts und schließen: 20×20px, `viewBox="0 0 24 24"`, kein Fill, `currentColor`, Strichstärke 2, runde Enden und Verbindungen. Monatsübersicht, Kalenderdialog und Entfernen von Umfrageoptionen verwenden sie. SVGs sind `aria-hidden` und nicht fokussierbar; der umgebende Button trägt den zugänglichen Aktionsnamen. Keine Schriftglyphen als Ersatz für diese Aktionen. Tabellenzeichen und Kalendermarker bleiben textliche Statuszeichen mit Legende und zugänglichem Status.
 
-Weiße Fläche mit feinem Rahmen, stark gerundeten Ecken und sehr schwachem Schatten. Standardpadding 30px; die Loginkarte überschreibt auf 36px, auf Mobile auf 28px. Fehlermeldungen und Löschbestätigungen sind explizit rote/rosafarbene Flächen.
+### Navigation / Panels
 
-### Navigation
+Grünes Band mit heller aktiver Schaltfläche. Mobile-Umbruch bleibt lesbar und ohne horizontales Seitenscrollen. Hauptflächen haben feine Rahmen; Abschnittsköpfe trennen Aufgaben durch eine horizontale Linie.
 
-Tabs sitzen in einer hellgrünen gerundeten Leiste. Der aktive Tab ist weiß mit dunkler Schrift und leichtem Schatten. Mobile-Tabs umbrechen; die Marken-Kopfzeile bleibt mit einer feinen Linie vom Inhalt getrennt.
+### Attendance / Surveys
 
-### Chips
+Teilnehmerzeile als großes Checkbox-Ziel. Anwesend: zusätzliches Häkchen, helle grüne Fläche und dunkles Initialenfeld. Antworten und Feldgruppen verwenden horizontale Grenzen. Bestätigte Speicherung, Fehler und Netzunsicherheit bleiben textlich sichtbar.
 
-Pills sind hellgrün, nicht automatisch interaktiv und mit `white-space: nowrap` gesetzt. Namens-Chips und Umfragezählungen umbrechen als Flexliste und nutzen gerundete Rechtecke.
+### Focus / Motion / Footer
 
-### Attendance
+Fokus: 3px `--focus` Outline mit 3px Abstand. Textselektion, Caret und Scrollbar beziehen Farben aus derselben Palette. Einziger bestehender Übergang: Teilnehmerhintergrund 0.15s; unter `prefers-reduced-motion` deaktiviert.
 
-Die gesamte beschriftete Teilnehmerzeile dient als Checkbox-Ziel. Anwesende Zeilen bekommen zusätzlich zum Häkchen einen hellgrünen Hintergrund und stärkeren grünen Rahmen. Speicherzustand und Fehler bleiben textlich erkennbar.
+Agency-Footer mit bestätigtem Wortlaut, unterstrichenem Link und abgesichertem neuen Tab bleibt global.
 
-### Calendar / Overview
-
-Kalendertage sind mindestens 48px hoch; Auswahl ist dunkelgrün, heute umrahmt und vorhandenes Training durch einen Punkt markiert. Tastaturbedienung und Fokuswiederherstellung gehören zum vorhandenen Verhalten. Die Verlaufstabelle unterscheidet anwesend, nicht anwesend und nicht zugeordnet durch unterschiedliche Zeichen.
-
-### Focus / Footer
-
-Globaler `:focus-visible`: 3px bernsteinfarbener Outline mit 3px Abstand. Der Agency-Footer bleibt auf allen Seiten mit dem in [PRODUCT.md](./PRODUCT.md) bestätigten Wortlaut; der Link ist unterstrichen, grün und öffnet abgesichert in einem neuen Tab.
+Nicht kanonisiert oder repariert: die dekorativen versalen Kontextzeilen bleiben eine Altlast, keine Typografieregel. Einzelne unsemantische Literale (Warnhinweise, Progress-Track, weiße Kalenderauswahl) bleiben dokumentierte Token-Drift statt neuer Paletteneinträge. Diese reine Dokumentationsrunde ändert keinen App-Code; die 18 synthetischen Review-Captures zeigen die letzten Pfeil-/380px-Fixes noch nicht, maßgeblich ist der aktuelle Quellcode.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** Aktionsgrün, Anwesenheit und Fehlerzustände entsprechend ihren bestehenden Rollen verwenden.
-- **Do** Fokus, Beschriftungen und textliche Speicherzustände erhalten.
-- **Do** Mobile-Umbruch und internes Tabellen-/Dialogscrollen berücksichtigen.
-- **Do** den bestätigten Agency-Footer erhalten.
+- **Do** gemeinsame semantische CSS-Tokens für neue Flächen verwenden.
+- **Do** schnelle Anwesenheitserfassung und sichtbare Zustände erhalten.
+- **Do** Hilfstexte, Fokus, Formulare und Mobile-Umbruch gemeinsam prüfen.
+- **Do** neue Gruppen durch Aufgaben und horizontale Linien gliedern.
+- **Do** gemeinsame SVG-Aktionen und die zweizeilige Monatsnavigation bis 380px erhalten.
 
 ### Don't:
-- **Don't** Anwesenheit oder Fehler ausschließlich durch Farbe kommunizieren.
-- **Don't** lokale Login-/Markeneffekte ungeprüft auf jede Fläche übertragen.
-- **Don't** dekorative Inszenierung an die Stelle klarer Aufgaben setzen.
-- **Don't** eine formale Barrierefreiheitskonformität aus dieser Bestandsdokumentation ableiten.
+- **Don't** neue Seiten mit dekorativen Innenkarten oder riesigen Hero-Blöcken aufbauen.
+- **Don't** Farbe als einzigen Statusindikator verwenden.
+- **Don't** Produkttexte oder Passwort-/Datentrennung als Designnebenwirkung ändern.
+- **Don't** externe Fonts zur Laufzeit nachladen.

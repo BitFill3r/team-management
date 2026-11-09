@@ -1,0 +1,20 @@
+{
+  "mode": "operate",
+  "target": "src/components/dashboard.tsx",
+  "direction": "Vereinsmitteilung",
+  "directionContract": {
+    "THESIS": "Eine ruhige Vereinsmitteilung für schnelle Aufgaben, keine Hero-/Kartenlandschaft.",
+    "OWN-WORLD": "Warmes Papier, dunkelgrüne Abschnittsbänder, Source Serif 4 für Überschriften, Arial für Formulare, feine horizontale Linien und kleine Radien.",
+    "STORY": "Trainer erkennen Mannschaft und aktive Aufgabe, wählen das Datum und erfassen Anwesenheit mit sofort sichtbarer Speicherrückmeldung.",
+    "FIRST VIEWPORT": "Kompakte Marken-Kopfzeile, bestehende Mannschaftsüberschrift, grünes Navigationsband, darunter die Trainingsfläche mit Datum oben und großflächigen Checkbox-Zeilen; mobile einspaltig.",
+    "FORM": "Vereinsmitteilung, erster Kandidat der geordneten Liste und ausdrücklich vom Nutzer gewählt statt zugeteilter Sportredaktion (Kandidat 3). seed:7decde26c3441845",
+    "FINISH": "unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance"
+  },
+  "intent": "Anwesenheit am Handy schnell erfassen; einheitliche, gut lesbare Basis für neue Vereins- und Mannschaftsfunktionen.",
+  "constraints": [
+    "Funktionen, Datenmodell und deutsche Inhalte erhalten.",
+    "Teamzugang und öffentliche Umfragen getrennt lassen.",
+    "HEYDOT-Footer auf allen Seiten erhalten.",
+    "Warmes Papier, grüne Abschnittsbänder und gegliederte Listen statt dekorativer Kartenlandschaft."
+  ]
+}

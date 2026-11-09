@@ -12,8 +12,8 @@ export default function Login() {
   return <main className="login-shell">
     <section className="card login-card">
       <div className="brand-mark" aria-hidden="true">AB</div>
-      <p className="eyebrow">UNSER TEAM. UNSER TRAINING.</p>
       <h1>Am Ball<span className="accent">.</span></h1>
+      <p className="context-note">UNSER TEAM. UNSER TRAINING.</p>
       <p className="muted">Wer ist heute dabei? Melde dich mit eurem Team-Passwort an.</p>
       <form onSubmit={async (event) => {
         event.preventDefault();
@@ -30,7 +30,7 @@ export default function Login() {
         <input id="password" type="password" autoComplete="current-password" required maxLength={256}
           value={password} onChange={(event) => setPassword(event.target.value)} disabled={busy} />
         {error && <p className="error" role="alert">{error}</p>}
-        <button className="full" disabled={busy}>{busy ? "Anmelden …" : "Zum Training →"}</button>
+        <button className="full" disabled={busy}>{busy ? "Anmelden …" : "Zum Training"}</button>
       </form>
       <p className="privacy-note">Geschützter Bereich · Nur für euer Trainerteam</p>
     </section>

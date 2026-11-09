@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import type { SurveyConfig } from "@/lib/survey-types";
+import ActionIcon from "./action-icon";
 
 export type PasswordChoice = { mode: "generated" } | { mode: "manual"; password: string };
 export function PasswordFields({ disabled, value, onChange }: { disabled: boolean; value: PasswordChoice; onChange: (value: PasswordChoice) => void }) {
@@ -61,7 +62,7 @@ export default function SurveyEditor({ initial, published, busy, creating, onSav
               const next = [...config.options]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; set("options", next);
             }}>↑</button>
             <button type="button" className="secondary danger" aria-label={`Option ${index + 1} entfernen`} disabled={config.options.length <= 2}
-              onClick={() => set("options", config.options.filter((_, position) => position !== index))}>×</button>
+              onClick={() => set("options", config.options.filter((_, position) => position !== index))}><ActionIcon name="close" /></button>
           </div>)}
           <button type="button" className="secondary" disabled={config.options.length >= 30} onClick={() => set("options", [...config.options, ""])}>Option hinzufügen</button>
         </div>}

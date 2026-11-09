@@ -37,9 +37,9 @@ export default function PublicSurvey({ token }: { token: string }) {
 
   return <main className="survey-public">
     <div className="card">
-      <p className="eyebrow">AM BALL · UMFRAGE</p>
       {loading ? <p role="status">Umfrage wird geladen …</p> : <>
         <h1>{survey && !unavailable ? survey.title : unavailable ? "Umfrage nicht verfügbar" : "An Umfrage teilnehmen"}</h1>
+        <p className="context-note">AM BALL · UMFRAGE</p>
         {error && <p className="error" role="alert">{error}</p>}
         {!survey && !unavailable && <form onSubmit={async (event) => {
           event.preventDefault(); if (submitting.current) return;

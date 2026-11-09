@@ -134,7 +134,7 @@ export default function Dashboard() {
       }, "Abgemeldet.")}>Abmelden</button>
     </header>
     <main>
-      <div className="page-heading"><div><p className="eyebrow">G-JUGEND · TRAINERBEREICH</p><h1>Kleine Kicker.<br />Großes Team.</h1></div><div className="team-badge">G<span>JUGEND</span></div></div>
+      <div className="page-heading"><div><h1>Kleine Kicker.<br />Großes Team.</h1><p className="context-note">G-JUGEND · TRAINERBEREICH</p></div><div className="team-badge">G<span>JUGEND</span></div></div>
       <nav className="tabs" aria-label="Hauptnavigation">
         {([["training", "Training"], ["history", "Verlauf"], ["admin", "Kinder verwalten"], ["surveys", "Umfragen"]] as const).map(([key, label]) =>
           <button key={key} className={view === key ? "active" : ""} aria-current={view === key ? "page" : undefined}
@@ -144,11 +144,11 @@ export default function Dashboard() {
       {error && <div className="error error-panel" role="alert"><p>{error}</p><button className="secondary" disabled={busy || loading} onClick={reload}>Gespeicherten Stand neu laden</button> <Link href="/login">Zur Anmeldung</Link></div>}
       {loading ? <section className="card"><p role="status">Die Teamliste wird geladen …</p></section> : snapshot && <>
         {view === "training" && <section className="card">
-          <div className="section-heading"><div><p className="eyebrow">AB AUF DEN PLATZ</p><h2>Wer ist dabei?</h2></div>
+          <div className="section-heading"><div><h2>Wer ist dabei?</h2><p className="context-note">AB AUF DEN PLATZ</p></div>
             <TrainingDatePicker value={date} trainingDates={snapshot.history.map((entry) => entry.date)} disabled={busy || needsReload} onChange={chooseDate} />
           </div>
           {!training ? <div className="empty">
-            <div className="empty-icon" aria-hidden="true">+</div><h3>Noch kein Training an diesem Tag</h3>
+            <h3>Noch kein Training an diesem Tag</h3>
             <p>Lege das Training für den {displayDate(date)} an. Alle aktuell aktiven Kinder werden aufgenommen.</p>
             {snapshot.children.every((child) => child.archived) && <p>Deine Teamliste ist noch leer. Füge am besten zuerst Kinder in der Verwaltung hinzu.</p>}
             <button disabled={disabled || snapshot.children.every((child) => child.archived)} onClick={() => void mutate(async () => {
@@ -177,7 +177,7 @@ export default function Dashboard() {
         {view === "history" && <AttendanceOverview month={overviewMonth} onMonthChange={setOverviewMonth} onOpenTraining={chooseDate} />}
         {view === "surveys" && <SurveyManager onBusy={setBusy} />}
         {view === "admin" && <section className="card">
-          <div className="section-heading"><div><p className="eyebrow">DAS SIND WIR</p><h2>Kinder verwalten</h2></div><span className="pill">{snapshot.children.filter((child) => !child.archived).length} aktiv</span></div>
+          <div className="section-heading"><div><h2>Kinder verwalten</h2><p className="context-note">DAS SIND WIR</p></div><span className="pill">{snapshot.children.filter((child) => !child.archived).length} aktiv</span></div>
           <p className="muted">Nur Vornamen, keine weiteren Kinderdaten. Neue Kinder werden auch in allen bereits angelegten Trainings ergänzt, zunächst als nicht anwesend.</p>
           <AddChild disabled={disabled} onAdd={async (name) => {
             return mutate(async () => {
