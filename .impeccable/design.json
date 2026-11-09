@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T08:39:54.736Z",
+  "generatedAt": "2026-11-09T09:09:31Z",
   "title": "Design System: Am Ball",
   "extensions": {
     "shadows": [],
@@ -19,7 +19,7 @@
       "refersTo": "button-primary",
       "description": "Dunkelgrüne Aufgabenaktion.",
       "html": "<button class=\"ds-primary\">Training anlegen</button>",
-      "css": ".ds-primary{font:700 16px/1.5 Arial,Helvetica,sans-serif;min-height:var(--control-height,48px);border:1px solid transparent;border-radius:var(--radius-control,6px);padding:11px 18px;background:var(--green,#24543e);color:var(--surface,#fffef9);cursor:pointer}.ds-primary:hover:not(:disabled){filter:brightness(.93)}.ds-primary:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-primary:disabled{opacity:.48;cursor:not-allowed}"
+      "css": ".ds-primary{font:700 16px/1.5 var(--font-app,\"Public Sans\"),sans-serif;min-height:var(--control-height,48px);border:1px solid transparent;border-radius:var(--radius-control,6px);padding:11px 18px;background:var(--green,#24543e);color:var(--surface,#ffffff);cursor:pointer}.ds-primary:hover:not(:disabled){filter:brightness(.93)}.ds-primary:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-primary:disabled{opacity:.48;cursor:not-allowed}"
     },
     {
       "name": "Sekundäre Aktion",
@@ -27,7 +27,7 @@
       "refersTo": "button-secondary",
       "description": "Nebenaktion mit sichtbarem Rahmen.",
       "html": "<button class=\"ds-secondary\">Aktualisieren</button>",
-      "css": ".ds-secondary{font:700 16px/1.5 Arial,Helvetica,sans-serif;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:11px 18px;background:var(--surface-subtle,#efeee4);color:var(--ink,#20382e);cursor:pointer}.ds-secondary:hover:not(:disabled){filter:brightness(.93)}.ds-secondary:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-secondary:disabled{opacity:.48;cursor:not-allowed}"
+      "css": ".ds-secondary{font:700 16px/1.5 var(--font-app,\"Public Sans\"),sans-serif;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:11px 18px;background:var(--surface-subtle,#edf2ee);color:var(--ink,#24352e);cursor:pointer}.ds-secondary:hover:not(:disabled){filter:brightness(.93)}.ds-secondary:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-secondary:disabled{opacity:.48;cursor:not-allowed}"
     },
     {
       "name": "Textfeld",
@@ -35,23 +35,23 @@
       "refersTo": "input",
       "description": "Gemeinsam beschriftetes Eingabefeld.",
       "html": "<label class=\"ds-label\">Neuer Vorname<input class=\"ds-input\" placeholder=\"Vorname\"></label>",
-      "css": ".ds-label{display:block;font:700 var(--text-small,.875rem)/1.5 Arial,Helvetica,sans-serif;color:var(--ink,#20382e)}.ds-input{display:block;box-sizing:border-box;width:100%;margin-top:6px;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:10px 12px;background:var(--surface,#fffef9);color:var(--ink,#20382e);font:400 16px/1.5 Arial,Helvetica,sans-serif;caret-color:var(--green,#24543e)}.ds-input::placeholder{color:var(--muted,#526157);opacity:1}.ds-input:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-input:disabled{background:var(--surface-subtle,#efeee4)}"
+      "css": ".ds-label{display:block;font:700 var(--text-small,.875rem)/1.5 var(--font-app,\"Public Sans\"),sans-serif;color:var(--ink,#24352e)}.ds-input{display:block;box-sizing:border-box;width:100%;margin-top:6px;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:10px 12px;background:var(--surface,#ffffff);color:var(--ink,#24352e);font:400 16px/1.5 var(--font-app,\"Public Sans\"),sans-serif;caret-color:var(--green,#24543e)}.ds-input::placeholder{color:var(--muted,#56645d);opacity:1}.ds-input:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-input:disabled{background:var(--surface-subtle,#edf2ee)}"
     },
     {
-      "name": "Mitteilungsfläche",
+      "name": "Inhaltsfläche",
       "kind": "card",
       "refersTo": "card",
       "description": "Flache Inhaltsfläche ohne Schatten.",
       "html": "<section class=\"ds-panel\"><h2 class=\"ds-heading\">Wer ist dabei?</h2></section>",
-      "css": ".ds-panel{background:var(--surface,#fffef9);border:1px solid var(--line,#d5d9cd);border-radius:var(--radius-panel,10px);padding:var(--space-8,32px);color:var(--ink,#20382e)}.ds-heading{margin:0;font:650 1.75rem/1.25 var(--font-heading,\"Source Serif 4\"),Georgia,serif;letter-spacing:-.015em;text-wrap:balance}@media(max-width:680px){.ds-panel{padding:24px 16px}}"
+      "css": ".ds-panel{background:var(--surface,#ffffff);border:1px solid var(--line,#dce3dd);border-radius:var(--radius-panel,10px);padding:var(--space-8,32px);color:var(--ink,#24352e)}.ds-heading{margin:0;font:700 1.5rem/1.25 var(--font-app,\"Public Sans\"),sans-serif;letter-spacing:-.02em;text-wrap:balance}@media(max-width:680px){.ds-panel{padding:24px 16px}}"
     },
     {
-      "name": "Abschnittsband",
+      "name": "Leichte Navigation",
       "kind": "nav",
       "refersTo": "tabs",
-      "description": "Navigation mit heller aktiver Auswahl.",
+      "description": "Neutrale Leiste mit weißer gerahmter Auswahl und grünem aktivem Text.",
       "html": "<div class=\"ds-tabs\" role=\"group\" aria-label=\"Darstellung\"><button class=\"ds-tab ds-active\" aria-pressed=\"true\">Tabelle</button><button class=\"ds-tab\" aria-pressed=\"false\">Tagesliste</button></div>",
-      "css": ".ds-tabs{display:flex;gap:var(--space-1,4px);padding:var(--space-2,8px);background:var(--green,#24543e);border-radius:var(--radius-control,6px)}.ds-tab{flex:1;font:700 .9375rem/1.5 Arial,Helvetica,sans-serif;min-height:var(--control-height,48px);border:1px solid transparent;border-radius:var(--radius-control,6px);padding:10px;background:transparent;color:var(--surface,#fffef9);cursor:pointer}.ds-active{background:var(--surface,#fffef9);color:var(--green,#24543e)}.ds-tab:hover:not(:disabled){filter:brightness(.93)}.ds-tab:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-tab:disabled{opacity:.48;cursor:not-allowed}@media(max-width:680px){.ds-tabs{flex-wrap:wrap;gap:4px}.ds-tab{flex-basis:calc(50% - 2px);font-size:var(--text-small,.875rem);padding:10px 6px}}"
+      "css": ".ds-tabs{display:flex;gap:var(--space-1,4px);padding:var(--space-1,4px);background:var(--surface-subtle,#edf2ee);border:1px solid var(--line,#dce3dd);border-radius:var(--radius-control,6px)}.ds-tab{flex:1;font:700 .9375rem/1.5 var(--font-app,\"Public Sans\"),sans-serif;min-height:var(--control-height,48px);border:1px solid transparent;border-radius:var(--radius-control,6px);padding:10px;background:transparent;color:var(--muted,#56645d);cursor:pointer}.ds-active{background:var(--surface,#ffffff);border-color:var(--control-border,#7b897e);color:var(--green,#24543e)}.ds-tab:hover:not(:disabled){background:var(--surface,#ffffff)}.ds-tab:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-tab:disabled{opacity:.48;cursor:not-allowed}@media(max-width:680px){.ds-tabs{flex-wrap:wrap;gap:4px}.ds-tab{flex-basis:calc(50% - 2px);font-size:var(--text-small,.875rem);padding:10px 6px}}"
     },
     {
       "name": "Kennzeichnung",
@@ -59,14 +59,14 @@
       "refersTo": "pill",
       "description": "Ruhige nicht interaktive Kennzeichnung.",
       "html": "<span class=\"ds-pill\">Aktiv</span>",
-      "css": ".ds-pill{display:inline-block;background:var(--surface-subtle,#efeee4);color:var(--ink,#20382e);padding:6px 12px;font:var(--text-small,.875rem)/1.5 Arial,Helvetica,sans-serif;border-radius:var(--radius-control,6px);white-space:nowrap}"
+      "css": ".ds-pill{display:inline-block;background:var(--surface-subtle,#edf2ee);color:var(--ink,#24352e);padding:6px 12px;font:var(--text-small,.875rem)/1.5 var(--font-app,\"Public Sans\"),sans-serif;border-radius:var(--radius-control,6px);white-space:nowrap}"
     },
     {
       "name": "Monatsnavigation / ActionIcon",
       "kind": "custom",
       "description": "Natives Monatsfeld zwischen gemeinsamen SVG-Aktionen; bis 380px volle Feldzeile über separaten, gleich breiten Pfeilen.",
       "html": "<div class=\"ds-month-navigation\"><button class=\"ds-month-arrow\" type=\"button\" aria-label=\"Vorheriger Monat\"><svg class=\"ds-action-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M15 6l-6 6 6 6\" /></svg></button><div class=\"ds-month-field\"><label class=\"ds-month-label\" for=\"ds-overview-month\">Monat</label><input class=\"ds-month-input\" id=\"ds-overview-month\" type=\"month\" min=\"2000-01\" max=\"2100-12\" value=\"2026-11\"></div><button class=\"ds-month-arrow\" type=\"button\" aria-label=\"Nächster Monat\"><svg class=\"ds-action-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M9 6l6 6-6 6\" /></svg></button></div>",
-      "css": ".ds-month-navigation{display:flex;align-items:end;gap:10px;margin:24px 0 18px;color:var(--ink,#20382e);font:400 16px/1.5 Arial,Helvetica,sans-serif}.ds-month-field{flex:1;min-width:0;max-width:240px}.ds-month-label{display:block;margin-bottom:6px;font-size:var(--text-small,.875rem);font-weight:700}.ds-month-input{box-sizing:border-box;width:100%;min-width:0;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:10px 12px;color:var(--ink,#20382e);background:var(--surface,#fffef9);font:400 16px/1.5 Arial,Helvetica,sans-serif;caret-color:var(--green,#24543e)}.ds-month-arrow{min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:11px 18px;color:var(--ink,#20382e);background:var(--surface-subtle,#efeee4);font:700 16px/1.5 Arial,Helvetica,sans-serif;cursor:pointer}.ds-action-icon{width:20px;height:20px;vertical-align:middle}.ds-month-arrow:hover:not(:disabled){filter:brightness(.93)}.ds-month-arrow:focus-visible,.ds-month-input:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-month-arrow:disabled{opacity:.48;cursor:not-allowed}.ds-month-input:disabled{background:var(--surface-subtle,#efeee4)}@media(max-width:380px){.ds-month-navigation{flex-wrap:wrap}.ds-month-field{flex:1 0 100%;max-width:none;order:-1}.ds-month-arrow{flex:1}}"
+      "css": ".ds-month-navigation{display:flex;align-items:end;gap:10px;margin:24px 0 18px;color:var(--ink,#24352e);font:400 16px/1.5 var(--font-app,\"Public Sans\"),sans-serif}.ds-month-field{flex:1;min-width:0;max-width:240px}.ds-month-label{display:block;margin-bottom:6px;font-size:var(--text-small,.875rem);font-weight:700}.ds-month-input{box-sizing:border-box;width:100%;min-width:0;min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:10px 12px;color:var(--ink,#24352e);background:var(--surface,#ffffff);font:400 16px/1.5 var(--font-app,\"Public Sans\"),sans-serif;caret-color:var(--green,#24543e)}.ds-month-arrow{min-height:var(--control-height,48px);border:1px solid var(--control-border,#7b897e);border-radius:var(--radius-control,6px);padding:11px 18px;color:var(--ink,#24352e);background:var(--surface-subtle,#edf2ee);font:700 16px/1.5 var(--font-app,\"Public Sans\"),sans-serif;cursor:pointer}.ds-action-icon{width:20px;height:20px;vertical-align:middle}.ds-month-arrow:hover:not(:disabled){filter:brightness(.93)}.ds-month-arrow:focus-visible,.ds-month-input:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-month-arrow:disabled{opacity:.48;cursor:not-allowed}.ds-month-input:disabled{background:var(--surface-subtle,#edf2ee)}@media(max-width:380px){.ds-month-navigation{flex-wrap:wrap}.ds-month-field{flex:1 0 100%;max-width:none;order:-1}.ds-month-arrow{flex:1}}"
     },
     {
       "name": "Anwesenheitszeile",
@@ -74,16 +74,16 @@
       "refersTo": "participant-present",
       "description": "Großes beschriftetes Checkbox-Ziel mit Linie, Initiale und zusätzlicher Anwesenheitsfläche.",
       "html": "<label class=\"ds-participant ds-present\"><span class=\"ds-avatar\" aria-hidden=\"true\">E</span><span class=\"ds-participant-name\">Emil</span><input class=\"ds-attendance-check\" type=\"checkbox\" checked aria-label=\"Emil: anwesend\"></label>",
-      "css": ".ds-participant{display:flex;align-items:center;gap:var(--space-3,12px);margin:0;padding:16px 12px;border:0;border-bottom:1px solid var(--line,#d5d9cd);border-radius:0;min-height:76px;color:var(--ink,#20382e);font:700 var(--text-small,.875rem)/1.5 Arial,Helvetica,sans-serif;cursor:pointer;transition:background .15s}.ds-present{background:var(--surface-present,#e9f1e5)}.ds-avatar{flex-shrink:0;width:36px;height:36px;display:grid;place-items:center;border-radius:var(--radius-control,6px);background:var(--green,#24543e);color:var(--surface,#fffef9);font-size:1rem}.ds-participant-name{flex:1;overflow-wrap:anywhere;font-size:1rem}.ds-attendance-check{width:26px;height:26px;min-height:26px;margin:0;flex-shrink:0;accent-color:var(--green,#24543e);cursor:pointer}.ds-attendance-check:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-attendance-check[aria-disabled=\"true\"]{cursor:wait;opacity:.6}@media(max-width:680px){.ds-participant{min-height:74px}}@media(prefers-reduced-motion:reduce){.ds-participant{transition:none}}"
+      "css": ".ds-participant{display:flex;align-items:center;gap:var(--space-3,12px);margin:0;padding:16px 12px;border:0;border-bottom:1px solid var(--line,#dce3dd);border-radius:0;min-height:76px;color:var(--ink,#24352e);font:700 var(--text-small,.875rem)/1.5 var(--font-app,\"Public Sans\"),sans-serif;cursor:pointer;transition:background .15s}.ds-present{background:var(--surface-present,#eaf4ed)}.ds-avatar{flex-shrink:0;width:36px;height:36px;display:grid;place-items:center;border-radius:var(--radius-control,6px);background:var(--green,#24543e);color:var(--surface,#ffffff);font-size:1rem}.ds-participant-name{flex:1;overflow-wrap:anywhere;font-size:1rem}.ds-attendance-check{width:26px;height:26px;min-height:26px;margin:0;flex-shrink:0;accent-color:var(--green,#24543e);cursor:pointer}.ds-attendance-check:focus-visible{outline:3px solid var(--focus,#86530e);outline-offset:3px}.ds-attendance-check[aria-disabled=\"true\"]{cursor:wait;opacity:.6}@media(max-width:680px){.ds-participant{min-height:74px}}@media(prefers-reduced-motion:reduce){.ds-participant{transition:none}}"
     }
   ],
   "narrative": {
-    "northStar": "Vereinsmitteilung",
-    "overview": "Die vom Nutzer gewählte Ersatzrichtung verbindet warmes Papier, grüne Abschnittsbänder und ruhig gegliederte Listen. Eine lokale Serifenschrift gibt Überschriften den Charakter einer Vereinsmitteilung; vertraute serifenlose Schrift hält Eingaben und Aufgaben gut lesbar.\n\nDie Oberfläche unterstützt schnelle Anwesenheitserfassung am Handy. Kleine Radien, feine horizontale Linien und flache Flächen ersetzen die frühere weiche Kartenlandschaft. Produkttexte, Abläufe und der Agency-Footer bleiben erhalten.",
+    "northStar": "Vereinsmitteilung 2.0 — modern und vertraut",
+    "overview": "Die vom Nutzer gewählte Verfeinerung bewahrt die ruhig gegliederten Listen und grüne Identität der Vereinsmitteilung. Helle, neutral-grüne Flächen, eine durchgängige lokale Public Sans und eine leichte Navigation geben allen Seiten einen modernen, sachlichen App-Charakter.\n\nDie Oberfläche unterstützt schnelle Anwesenheitserfassung am Handy. Kompaktere Kopf- und Abschnittsabstände bringen Datum und Teilnehmer nach oben; kleine Radien, feine horizontale Linien und flache Flächen bleiben. Produkttexte, Abläufe und der Agency-Footer bleiben erhalten.",
     "keyCharacteristics": [
-      "Warmes Papier mit klar getrennten Inhaltsflächen.",
-      "Grüne Navigationsbänder und gut erkennbare aktive Auswahl.",
-      "Serifische Überschriften, sachliche Formularschrift.",
+      "Heller neutral-grüner Hintergrund mit weißen Inhaltsflächen.",
+      "Leichte Navigationsleisten mit gerahmter aktiver Auswahl und grünem Text.",
+      "Eine lokale Sans-Serif für Überschriften, Formulare und Fließtext.",
       "Gegliederte Teilnehmer- und Antwortlisten statt verschachtelter Karten."
     ],
     "rules": [],

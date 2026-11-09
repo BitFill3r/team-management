@@ -3,13 +3,13 @@ import type { Snapshot } from "../../src/lib/types";
 
 for (const width of [1280, 390, 320]) {
   test(`Designbasis: Layout, Kontrast und Formulare bei ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 900 });
+    await page.setViewportSize({ width, height: 844 });
     await page.goto("/login");
     await expect(page.getByRole("contentinfo")).toBeVisible();
     const checkLayout = async () => {
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      for (const input of await page.locator('input:not([type="checkbox"])').all()) {
-        const box = await input.boundingBox();
+      for (const control of await page.locator('input:not([type="checkbox"]), select, textarea, button').all()) {
+        const box = await control.boundingBox();
         if (box) expect(box.height).toBeGreaterThanOrEqual(48);
       }
     };
@@ -31,7 +31,31 @@ for (const width of [1280, 390, 320]) {
     });
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "Wer ist dabei?" })).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
     await checkLayout();
+    const firstParticipant = await page.locator(".participant").first().boundingBox();
+    expect(firstParticipant).not.toBeNull();
+    expect(firstParticipant!.y + firstParticipant!.height).toBeLessThanOrEqual(844);
+    if (width === 390) expect(firstParticipant!.y).toBeLessThanOrEqual(650);
+    const dateField = await page.getByLabel("Trainingsdatum", { exact: true }).boundingBox();
+    expect(dateField!.y + dateField!.height).toBeLessThanOrEqual(844);
+    await page.getByRole("button", { name: "Training", exact: true }).focus();
+    expect(await page.getByRole("button", { name: "Training", exact: true }).evaluate(element =>
+      getComputedStyle(element).outlineStyle)).toBe("solid");
+    const font = await page.evaluate(async () => {
+      await document.fonts.ready;
+      const family = getComputedStyle(document.body).fontFamily;
+      return {
+        family,
+        heading: getComputedStyle(document.querySelector("h1")!).fontFamily,
+        input: getComputedStyle(document.querySelector("input")!).fontFamily,
+        loaded: [...document.fonts].some(face =>
+          face.family === family.split(",")[0].trim() && face.status === "loaded"),
+      };
+    });
+    expect(font.heading).toBe(font.family);
+    expect(font.input).toBe(font.family);
+    expect(font.loaded).toBe(true);
     const contrast = await page.evaluate(() => {
       const rgb = (value: string) => value.match(/\d+/g)!.slice(0, 3).map(Number);
       const luminance = (color: number[]) => color.map(value => {
@@ -56,6 +80,12 @@ for (const width of [1280, 390, 320]) {
         ratio(token("--muted"), token("--surface")),
         ratio(token("--surface"), token("--green")),
         ratio(token("--error-text"), token("--error-bg")),
+        ratio(token("--muted"), token("--paper")),
+        ratio(token("--muted"), token("--surface-subtle")),
+        ratio(token("--muted"), token("--surface-present")),
+        ratio(token("--green"), token("--surface")),
+        ratio(token("--focus"), token("--surface")),
+        ratio(token("--danger"), token("--surface")),
       ];
     });
     for (const ratio of contrast) expect(ratio).toBeGreaterThanOrEqual(4.5);
@@ -65,6 +95,10 @@ for (const width of [1280, 390, 320]) {
     await checkLayout();
     await page.screenshot({ path: `.impeccable/review/calendar-${width}.png`, fullPage: true });
     await page.keyboard.press("Escape");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    expect(await page.locator(".participant").first().evaluate(element =>
+      getComputedStyle(element).transitionDuration)).toBe("0s");
+    await page.emulateMedia({ reducedMotion: "no-preference" });
     for (const section of ["Kinder verwalten", "Verlauf", "Umfragen"]) {
       await page.getByRole("button", { name: section, exact: true }).click();
       await expect(page.getByRole("heading", { name: section === "Verlauf" ? "Trainingsverlauf" : section, exact: true })).toBeVisible();

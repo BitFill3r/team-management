@@ -1,16 +1,16 @@
 ---
 name: Am Ball
-description: Vereinsmitteilung — warmes Papier, grüne Abschnittsbänder und klar gegliederte Listen.
+description: Vereinsmitteilung 2.0 — helle Flächen, lokale Public Sans und leichte Navigation.
 colors:
   green: "#24543e"
-  lime: "#edf1da"
-  ink: "#20382e"
-  muted: "#526157"
-  line: "#d5d9cd"
-  paper: "#f6f3e9"
-  surface: "#fffef9"
-  surface-subtle: "#efeee4"
-  surface-present: "#e9f1e5"
+  lime: "#e7f0e8"
+  ink: "#24352e"
+  muted: "#56645d"
+  line: "#dce3dd"
+  paper: "#f5f7f4"
+  surface: "#ffffff"
+  surface-subtle: "#edf2ee"
+  surface-present: "#eaf4ed"
   control-border: "#7b897e"
   focus: "#86530e"
   danger: "#a12e32"
@@ -19,34 +19,34 @@ colors:
   error-border: "#c78580"
 typography:
   display:
-    fontFamily: "Source Serif 4, Georgia, serif"
-    fontSize: "clamp(2rem, 4vw, 3rem)"
-    fontWeight: 650
-    lineHeight: 1.15
-    letterSpacing: "-0.02em"
+    fontFamily: "Public Sans, sans-serif"
+    fontSize: "clamp(1.75rem, 3vw, 2.5rem)"
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "-0.03em"
   headline:
-    fontFamily: "Source Serif 4, Georgia, serif"
-    fontSize: "1.75rem"
-    fontWeight: 650
+    fontFamily: "Public Sans, sans-serif"
+    fontSize: "1.5rem"
+    fontWeight: 700
     lineHeight: 1.25
-    letterSpacing: "-0.015em"
+    letterSpacing: "-0.02em"
   body:
-    fontFamily: "Arial, Helvetica, sans-serif"
+    fontFamily: "Public Sans, sans-serif"
     fontSize: "16px"
     fontWeight: 400
     lineHeight: 1.5
   title:
-    fontFamily: "Arial, Helvetica, sans-serif"
+    fontFamily: "Public Sans, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 700
     lineHeight: 1.5
   navigation:
-    fontFamily: "Arial, Helvetica, sans-serif"
+    fontFamily: "Public Sans, sans-serif"
     fontSize: "0.9375rem"
     fontWeight: 700
     lineHeight: 1.5
   label:
-    fontFamily: "Arial, Helvetica, sans-serif"
+    fontFamily: "Public Sans, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 700
     lineHeight: 1.5
@@ -85,9 +85,9 @@ components:
     rounded: "{rounded.panel}"
     padding: "32px"
   tabs:
-    backgroundColor: "{colors.green}"
+    backgroundColor: "{colors.surface-subtle}"
     rounded: "{rounded.control}"
-    padding: "8px"
+    padding: "4px"
   pill:
     backgroundColor: "{colors.surface-subtle}"
     rounded: "{rounded.control}"
@@ -105,16 +105,16 @@ components:
 
 ## Overview
 
-**Creative North Star: "Vereinsmitteilung"**
+**Creative North Star: "Vereinsmitteilung 2.0 — modern und vertraut"**
 
-Die vom Nutzer gewählte Ersatzrichtung verbindet warmes Papier, grüne Abschnittsbänder und ruhig gegliederte Listen. Eine lokale Serifenschrift gibt Überschriften den Charakter einer Vereinsmitteilung; vertraute serifenlose Schrift hält Eingaben und Aufgaben gut lesbar.
+Die vom Nutzer gewählte Verfeinerung bewahrt die ruhig gegliederten Listen und grüne Identität der Vereinsmitteilung. Helle, neutral-grüne Flächen, eine durchgängige lokale Public Sans und eine leichte Navigation geben allen Seiten einen modernen, sachlichen App-Charakter.
 
-Die Oberfläche unterstützt schnelle Anwesenheitserfassung am Handy. Kleine Radien, feine horizontale Linien und flache Flächen ersetzen die frühere weiche Kartenlandschaft. Produkttexte, Abläufe und der Agency-Footer bleiben erhalten.
+Die Oberfläche unterstützt schnelle Anwesenheitserfassung am Handy. Kompaktere Kopf- und Abschnittsabstände bringen Datum und Teilnehmer nach oben; kleine Radien, feine horizontale Linien und flache Flächen bleiben. Produkttexte, Abläufe und der Agency-Footer bleiben erhalten.
 
 **Key Characteristics:**
-- Warmes Papier mit klar getrennten Inhaltsflächen.
-- Grüne Navigationsbänder und gut erkennbare aktive Auswahl.
-- Serifische Überschriften, sachliche Formularschrift.
+- Heller neutral-grüner Hintergrund mit weißen Inhaltsflächen.
+- Leichte Navigationsleisten mit gerahmter aktiver Auswahl und grünem Text.
+- Eine lokale Sans-Serif für Überschriften, Formulare und Fließtext.
 - Gegliederte Teilnehmer- und Antwortlisten statt verschachtelter Karten.
 
 ## Colors
@@ -122,11 +122,11 @@ Die Oberfläche unterstützt schnelle Anwesenheitserfassung am Handy. Kleine Rad
 Die semantischen CSS-Variablen in [globals.css](./src/app/globals.css) sind die Implementierungsquelle. Frontmatter dokumentiert ihre Werte; neue Oberflächen verwenden dieselben Variablen.
 
 ### Primary
-- `green`: Aktionen, Navigation, Links, Auswahl.
+- `green`: Aktionen, aktive Navigation, Links, Auswahl.
 - `lime`: helle Schriftfläche der AB-Marke.
 
 ### Neutral
-- `paper`: warmes Seitenpapier.
+- `paper`: heller, leicht grünlicher Seitenhintergrund.
 - `surface`: helle Inhalts- und Formularfläche.
 - `surface-subtle`: ruhige Gruppierung, Tabellenköpfe und sekundäre Aktionen.
 - `ink` und `muted`: Haupt- und Hilfstexte.
@@ -136,19 +136,19 @@ Die semantischen CSS-Variablen in [globals.css](./src/app/globals.css) sind die 
 
 ## Typography
 
-Source Serif 4 wird in [layout.tsx](./src/app/layout.tsx) lokal über `next/font/local`, `--font-heading` und `display: swap` eingebunden. [source-serif-4.ttf](./public/fonts/source-serif-4.ttf) und [SIL OFL 1.1](./public/fonts/OFL.txt) liegen im Projekt; keine Laufzeit-Anfrage an einen externen Fontdienst.
+Public Sans wird in [layout.tsx](./src/app/layout.tsx) lokal über `next/font/local`, `--font-app` und `display: swap` eingebunden. [public-sans.ttf](./public/fonts/public-sans.ttf) und [SIL OFL 1.1](./public/fonts/public-sans-OFL.txt) liegen im Projekt; keine Laufzeit-Anfrage an einen externen Fontdienst. Die variable Schrift unterstützt die verwendeten Gewichte 400, 700 und 800.
 
-h1/h2 verwenden die Serifenschrift, Gewicht 650, moderate negative Laufweite und balancierten Umbruch. Login-h1 ist 3rem; öffentliche Umfragen verwenden `clamp(1.8rem, 6vw, 2.8rem)`.
+h1/h2 verwenden Gewicht 700, moderate negative Laufweite und balancierten Umbruch. Login-h1 ist 2.5rem; öffentliche Umfragen verwenden weiterhin `clamp(1.8rem, 6vw, 2.8rem)`.
 
-Formulare und Fließtext bleiben Arial/Helvetica/sans-serif bei 16px und 1.5 Zeilenhöhe. Wiederkehrende Hilfstexte, Labels und Footer verwenden `--text-small` (0.875rem); mobile Navigation ebenfalls.
+Formulare und Fließtext verwenden dieselbe Public Sans bei 16px und 1.5 Zeilenhöhe. Wiederkehrende Hilfstexte, Labels und Footer verwenden `--text-small` (0.875rem); mobile Navigation ebenfalls.
 
 Absätze sind auf 72ch begrenzt. Monatsübersicht, Anwesenheitssumme und Umfragezählungen verwenden tabellarische Ziffern. Lange Namen und Umfrageantworten umbrechen.
 
 ## Layout
 
-Teamcontainer: 1040px maximal, volle verfügbare Breite, 32px seitliches Padding. Karten: 32px Padding. Der Kopfbereich bleibt kompakter als die alte Hero-Fläche. Navigation bildet ein zusammenhängendes grünes Band.
+Teamcontainer: 1040px maximal, volle verfügbare Breite, 32px seitliches Padding. Karten: 32px Padding. Markenleiste: 12px vertikales Padding; Mannschaftskopf: 24px oben und 20px unten. Navigation bildet eine helle, fein gerahmte Leiste mit 4px Innenabstand.
 
-Bis 680px: 16px Containerpadding, 24px 16px Kartenpadding, zweizeilige Navigation und einspaltige Teilnehmerliste. Verwaltungsformulare ordnen sich vertikal an. Speicherhinweise dürfen umbrechen.
+Bis 680px: 16px Containerpadding, 24px 16px Kartenpadding, 20px/16px Kopfabstände, zweizeilige Navigation und einspaltige Teilnehmerliste. Verwaltungsformulare ordnen sich vertikal an. Speicherhinweise dürfen umbrechen. Abschnittsabstand und Abstand zwischen Progress und Liste: 16px. Bei 390x844 wird der Listenbeginn spätestens bei y=650 geprüft; Datum und eine lange erste Teilnehmerzeile bleiben vollständig im ersten Bildschirm.
 
 Teilnehmerliste: zwei Spalten auf Desktop, einspaltig auf Mobile; horizontale Trennlinien statt Einzelkarten. Öffentliche Umfragen sind maximal 740px breit. Login nutzt eine maximal 460px breite Mitteilungsfläche.
 
@@ -178,7 +178,7 @@ Hover: bestehendes `brightness(.93)`; Disabled: Opazität .48 und korrekter Curs
 
 ### Navigation / Panels
 
-Grünes Band mit heller aktiver Schaltfläche. Mobile-Umbruch bleibt lesbar und ohne horizontales Seitenscrollen. Hauptflächen haben feine Rahmen; Abschnittsköpfe trennen Aufgaben durch eine horizontale Linie.
+Helle Leiste mit weißer, gerahmter aktiver Schaltfläche und grünem Text. Inaktive Texte verwenden `muted`; Hover hellt die Fläche auf, ohne den aktiven Rahmen zu ersetzen. Hauptnavigation und Verlaufsauswahl teilen dieselbe Regel. Mobile-Umbruch bleibt lesbar und ohne horizontales Seitenscrollen. Hauptflächen haben feine Rahmen; Abschnittsköpfe trennen Aufgaben durch eine horizontale Linie.
 
 ### Attendance / Surveys
 
@@ -190,7 +190,7 @@ Fokus: 3px `--focus` Outline mit 3px Abstand. Textselektion, Caret und Scrollbar
 
 Agency-Footer mit bestätigtem Wortlaut, unterstrichenem Link und abgesichertem neuen Tab bleibt global.
 
-Nicht kanonisiert oder repariert: die dekorativen versalen Kontextzeilen bleiben eine Altlast, keine Typografieregel. Einzelne unsemantische Literale (Warnhinweise, Progress-Track, weiße Kalenderauswahl) bleiben dokumentierte Token-Drift statt neuer Paletteneinträge. Diese reine Dokumentationsrunde ändert keinen App-Code; die 18 synthetischen Review-Captures zeigen die letzten Pfeil-/380px-Fixes noch nicht, maßgeblich ist der aktuelle Quellcode.
+Die bestehenden versalen Kontexttexte bleiben unverändert, sind aber keine Vorlage für neue dekorative Labels. Einzelne lokale Schriftgrößen und Warnfarben sowie die weiße Kalenderauswahl bleiben bestehende Ausnahmen. Der Progress-Track verwendet jetzt `surface-subtle`. Gerenderte Login-, Team-, Kalender-, Verlaufs-, Verwaltungs- und Umfrageansichten wurden bei 1280, 390 und 320px geprüft; die Browserprüfungen decken außerdem Schriftladung, Mindesthöhen, semantische Textkontraste, sichtbaren Fokus und Reduced Motion ab. Dies ist kein vollständiger WCAG-Audit.
 
 ## Do's and Don'ts
 

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-const headingFont = localFont({
-  src: "../../public/fonts/source-serif-4.ttf",
-  variable: "--font-heading",
+const appFont = localFont({
+  src: "../../public/fonts/public-sans.ttf",
+  variable: "--font-app",
   display: "swap",
 });
 
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="de" className={headingFont.variable}><body>
+  return <html lang="de" className={appFont.variable}><body>
     {children}
     <footer className="agency-footer">
       Powered by <a href="https://www.heydot.de" target="_blank" rel="noopener noreferrer">heydot.de</a> - HEYDOT Agency - Eltville am Rhein
