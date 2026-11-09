@@ -1,5 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input, Label } from "@/components/ui/fields";
+import { Panel } from "@/components/ui/panel";
+import { ErrorMessage } from "@/components/ui/feedback";
+
 import { useEffect, useRef, useState } from "react";
 import { api, errorMessage, RequestError } from "@/lib/client";
 import type { PublicSurvey as Survey } from "@/lib/survey-types";
@@ -35,12 +40,12 @@ export default function PublicSurvey({ token }: { token: string }) {
     return () => controller.abort();
   }, [path]);
 
-  return <main className="survey-public">
-    <div className="card">
+  return <main className="mx-auto w-full max-w-[740px] flex-1 px-4 py-8 [&_h1]:text-[clamp(1.8rem,6vw,2.8rem)] [&_h1]:[overflow-wrap:anywhere] [&_form>button]:mt-4">
+    <Panel as="div">
       {loading ? <p role="status">Umfrage wird geladen …</p> : <>
         <h1>{survey && !unavailable ? survey.title : unavailable ? "Umfrage nicht verfügbar" : "An Umfrage teilnehmen"}</h1>
-        <p className="context-note">AM BALL · UMFRAGE</p>
-        {error && <p className="error" role="alert">{error}</p>}
+        <p className="mt-2 mb-6 text-small text-muted">AM BALL · UMFRAGE</p>
+        {error && <ErrorMessage as="p" role="alert">{error}</ErrorMessage>}
         {!survey && !unavailable && <form onSubmit={async (event) => {
           event.preventDefault(); if (submitting.current) return;
           submitting.current = true; setBusy(true); setError("");
@@ -50,18 +55,18 @@ export default function PublicSurvey({ token }: { token: string }) {
           } catch (error) { failure(error); }
           finally { submitting.current = false; setBusy(false); }
         }}>
-          <label htmlFor="survey-password">Umfrage-Passwort</label>
-          <input id="survey-password" type="password" autoComplete="current-password" required maxLength={128}
+          <Label htmlFor="survey-password">Umfrage-Passwort</Label>
+          <Input id="survey-password" type="password" autoComplete="current-password" required maxLength={128}
             value={password} disabled={busy} onChange={(event) => setPassword(event.target.value)} />
-          <button className="full" disabled={busy}>{busy ? "Wird geprüft …" : "Umfrage öffnen"}</button>
+          <Button type="submit" className="w-full" disabled={busy}>{busy ? "Wird geprüft …" : "Umfrage öffnen"}</Button>
         </form>}
         {survey && !unavailable && <>
-          <p className="survey-description">{survey.description}</p>
+          <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{survey.description}</p>
           {sent ? <div role="status"><h2>Vielen Dank!</h2><p>Dein Eintrag wurde gespeichert.</p>
-            <button onClick={() => {
+            <Button onClick={() => {
               setSent(false); setAnswers(emptySurveyAnswers); setUncertain(false); submissionId.current = null;
               requestAnimationFrame(() => firstInput.current?.querySelector("input")?.focus());
-            }}>Weiteren Eintrag erfassen</button></div>
+            }}>Weiteren Eintrag erfassen</Button></div>
             : <form onSubmit={async (event) => {
               event.preventDefault(); if (submitting.current) return;
               const answer = answerPayload(answers);
@@ -79,18 +84,18 @@ export default function PublicSurvey({ token }: { token: string }) {
             }}>
               <div ref={firstInput}><SurveyFields survey={survey} value={answers} onChange={setAnswers} disabled={busy || uncertain} /></div>
               {uncertain && <p>Die Speicherbestätigung fehlt. Bitte diesen unveränderten Eintrag erneut absenden; er wird nicht doppelt gespeichert. Die Seite dabei nicht neu laden.</p>}
-              <p className="muted">Mindestens ein Feld ausfüllen. Freitext: höchstens 200 Zeichen pro Feld.</p>
-              <button disabled={busy}>{busy ? "Wird gespeichert …" : "Eintrag absenden"}</button>
+              <p className="text-muted">Mindestens ein Feld ausfüllen. Freitext: höchstens 200 Zeichen pro Feld.</p>
+              <Button type="submit" disabled={busy}>{busy ? "Wird gespeichert …" : "Eintrag absenden"}</Button>
             </form>}
-          <p className="privacy-note">Deine Angaben werden für den oben beschriebenen Zweck erfasst. Nur der Trainerbereich kann Antworten einsehen und korrigieren. Bitte bei Korrekturen die verantwortlichen Trainer kontaktieren. Diese können die Daten nach Abschluss löschen.</p>
-          <button className="text-button" disabled={busy} onClick={async () => {
+          <p className="mt-6 mb-0 text-small text-muted">Deine Angaben werden für den oben beschriebenen Zweck erfasst. Nur der Trainerbereich kann Antworten einsehen und korrigieren. Bitte bei Korrekturen die verantwortlichen Trainer kontaktieren. Diese können die Daten nach Abschluss löschen.</p>
+          <Button variant="text" size="text" disabled={busy} onClick={async () => {
             setBusy(true); setError("");
             try { await api(`${path}/logout`, "POST", {}); setSurvey(null); setSent(false); setUncertain(false); setAnswers(emptySurveyAnswers); submissionId.current = null; }
             catch (error) { failure(error); } finally { setBusy(false); }
-          }}>Umfrage verlassen</button>
+          }}>Umfrage verlassen</Button>
         </>}
-        {!survey && error && !unavailable && <button className="secondary" disabled={busy} onClick={() => window.location.reload()}>Erneut laden</button>}
+        {!survey && error && !unavailable && <Button variant="secondary" disabled={busy} onClick={() => window.location.reload()}>Erneut laden</Button>}
       </>}
-    </div>
+    </Panel>
   </main>;
 }

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import type { Snapshot } from "../../src/lib/types";
 
-for (const width of [1280, 390, 320]) {
+for (const width of [1280, 390, 320, 380, 381, 680, 681]) {
   test(`Designbasis: Layout, Kontrast und Formulare bei ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/login");
@@ -33,7 +33,7 @@ for (const width of [1280, 390, 320]) {
     await expect(page.getByRole("heading", { name: "Wer ist dabei?" })).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
     await checkLayout();
-    const firstParticipant = await page.locator(".participant").first().boundingBox();
+    const firstParticipant = await page.locator("[data-ui=participant]").first().boundingBox();
     expect(firstParticipant).not.toBeNull();
     expect(firstParticipant!.y + firstParticipant!.height).toBeLessThanOrEqual(844);
     if (width === 390) expect(firstParticipant!.y).toBeLessThanOrEqual(650);
@@ -89,14 +89,14 @@ for (const width of [1280, 390, 320]) {
       ];
     });
     for (const ratio of contrast) expect(ratio).toBeGreaterThanOrEqual(4.5);
-    await page.screenshot({ path: `.impeccable/review/${width === 1280 ? "desktop" : width === 390 ? "mobile" : "user-320"}.png`, fullPage: true });
+    await page.screenshot({ path: `.impeccable/review/${width === 1280 ? "desktop" : width === 390 ? "mobile" : width === 320 ? "user-320" : `team-${width}`}.png`, fullPage: true });
     await page.getByRole("button", { name: "Kalender", exact: true }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await checkLayout();
     await page.screenshot({ path: `.impeccable/review/calendar-${width}.png`, fullPage: true });
     await page.keyboard.press("Escape");
     await page.emulateMedia({ reducedMotion: "reduce" });
-    expect(await page.locator(".participant").first().evaluate(element =>
+    expect(await page.locator("[data-ui=participant]").first().evaluate(element =>
       getComputedStyle(element).transitionDuration)).toBe("0s");
     await page.emulateMedia({ reducedMotion: "no-preference" });
     for (const section of ["Kinder verwalten", "Verlauf", "Umfragen"]) {

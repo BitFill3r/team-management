@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T09:09:31Z",
+  "generatedAt": "2026-11-09T11:37:11Z",
   "title": "Design System: Am Ball",
   "extensions": {
     "shadows": [],
@@ -86,19 +86,27 @@
       "Eine lokale Sans-Serif für Überschriften, Formulare und Fließtext.",
       "Gegliederte Teilnehmer- und Antwortlisten statt verschachtelter Karten."
     ],
-    "rules": [],
+    "rules": [
+      "Tailwind CSS 4 bildet semantische Tokens über @theme inline ab; Layouts verwenden vollständige statische Utilities.",
+      "Wiederkehrende Controls kommen aus src/components/ui/; Varianten besitzen gemeinsame Größen, Farben und Zustandsdarstellung.",
+      "Native Props und Control-Refs bleiben erhalten. Submit ist explizit; Busy, Disabled, Retry und Live-Regionen bleiben beim fachlichen Aufrufer.",
+      "Portable HTML/CSS-Vorschauen spiegeln die Designwerte; die App verwendet dieselben Werte über Tailwind und native React-Primitive."
+    ],
     "dos": [
       "**Do** gemeinsame semantische CSS-Tokens für neue Flächen verwenden.",
       "**Do** schnelle Anwesenheitserfassung und sichtbare Zustände erhalten.",
       "**Do** Hilfstexte, Fokus, Formulare und Mobile-Umbruch gemeinsam prüfen.",
       "**Do** neue Gruppen durch Aufgaben und horizontale Linien gliedern.",
-      "**Do** gemeinsame SVG-Aktionen und die zweizeilige Monatsnavigation bis 380px erhalten."
+      "**Do** gemeinsame SVG-Aktionen und die zweizeilige Monatsnavigation bis 380px erhalten.",
+      "**Do** Controls aus src/components/ui/ importieren und fachliche Zustandsregeln beim Aufrufer lassen.",
+      "**Do** vollständige statische Tailwind-Klassen verwenden; Varianten nicht aus Klassenfragmenten zusammensetzen."
     ],
     "donts": [
       "**Don't** neue Seiten mit dekorativen Innenkarten oder riesigen Hero-Blöcken aufbauen.",
       "**Don't** Farbe als einzigen Statusindikator verwenden.",
       "**Don't** Produkttexte oder Passwort-/Datentrennung als Designnebenwirkung ändern.",
-      "**Don't** externe Fonts zur Laufzeit nachladen."
+      "**Don't** externe Fonts zur Laufzeit nachladen.",
+      "**Don't** Primitive durch seitenabhängige Farb-/Disabled-Regeln überschreiben oder eine zweite globale Komponenten-CSS-Schicht aufbauen."
     ]
   }
 }

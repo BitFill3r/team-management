@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="de" className={appFont.variable}><body>
     {children}
-    <footer className="agency-footer">
+    <footer className="mt-auto border-t border-line px-4 py-6 text-center text-small text-muted [overflow-wrap:anywhere]">
       Powered by <a href="https://www.heydot.de" target="_blank" rel="noopener noreferrer">heydot.de</a> - HEYDOT Agency - Eltville am Rhein
     </footer>
   </body></html>;

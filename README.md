@@ -2,6 +2,30 @@
 
 Eine kleine, deutschsprachige Web-App für die Trainingsanwesenheit einer G-Jugend. Optimiert für Handy und Computer, mit gemeinsamer Online-Speicherung und einem Team-Passwort.
 
+## Oberfläche weiterentwickeln
+
+Die App verwendet Tailwind CSS 4 über PostCSS und kleine native React-Komponenten in [src/components/ui/](./src/components/ui/). Das bestehende Design ist in [DESIGN.md](./DESIGN.md) dokumentiert.
+
+```tsx
+import { Button } from "@/components/ui/button";
+import { Input, Label } from "@/components/ui/fields";
+
+<Label htmlFor="name">Vorname</Label>
+<Input id="name" required maxLength={60} disabled={busy} />
+<Button type="submit" disabled={busy}>Speichern</Button>
+<Button variant="secondary" onClick={onCancel}>Abbrechen</Button>
+```
+
+- Wiederkehrende Controls verwenden `Button`, `Input`, `Select`, `Textarea`, `Checkbox`, `Label` und `Fieldset`; gemeinsame Flächen `Panel`, `SectionHeading` und `NavigationGroup`.
+- Button-Varianten bündeln Darstellung. `type="button"` ist der Standard; Submit-Aktionen immer ausdrücklich markieren. Die fachlichen Aufrufer steuern weiterhin Busy-/Disabled-Zustände, Fehler, Texte, Retry und Speicherlogik.
+- Native Props und Control-Refs bleiben verfügbar. Labels, `required`, Limits, `readOnly`, Fieldsets und ARIA nicht durch eigene Formmechanik ersetzen.
+- Layouts verwenden Utilities. Semantische Werte sind in [globals.css](./src/app/globals.css) definiert und über `@theme inline` verfügbar, etwa `bg-surface`, `text-muted`, `rounded-control`, `min-h-control`. Klassen vollständig ausschreiben, nicht dynamisch aus Fragmenten erzeugen.
+- Keine konkurrierenden Farb-/Zustands-Utilities an ein Control anhängen; eine echte wiederkehrende Variante im gemeinsamen Primitiv ergänzen. `className` bleibt für Layout und fachliche Einzelfälle.
+- Die inklusiven Breakpoints 380px und 680px bleiben explizit. Controls sind mindestens 48px hoch; native Checkboxen sitzen in größeren beschrifteten Zielen.
+- Tailwind 4 setzt moderne Browser voraus: Safari 16.4+, Chrome 111+, Firefox 128+. Die automatisierten Browsertests laufen mit Chromium; daraus folgt keine vollständige browserübergreifende Zertifizierung.
+
+Vor Browserprüfungen `npm run build` ausführen; der Testserver verwendet den Produktionsbuild. `npm run test:e2e` prüft bestehende Abläufe, responsive Grenzen und gemeinsame UI-Verträge (Submit, Fokus, Varianten und deaktivierte Fieldsets). Die Migration benötigt keine zusätzliche Komponentenbibliothek oder Laufzeit-Styling-Engine.
+
 ## Aktuelles Deployment
 
 - App: https://fuss-am-ball.de

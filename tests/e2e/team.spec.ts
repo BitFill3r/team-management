@@ -19,7 +19,7 @@ for (const setup of [
     await expect(page.getByRole("contentinfo").getByRole("link", { name: "heydot.de" })).toHaveAttribute("rel", "noopener noreferrer");
     await page.getByLabel("Team-Passwort").fill("wrong");
     await page.getByRole("button", { name: "Zum Training" }).click();
-    await expect(page.locator(".error[role=alert]")).toContainText("nicht richtig");
+    await expect(page.locator("[data-ui=error][role=alert]")).toContainText("nicht richtig");
     await page.getByLabel("Team-Passwort").fill("browser-test-password");
     await page.getByRole("button", { name: "Zum Training" }).click();
     await expect(page.getByRole("heading", { name: "Wer ist dabei?" })).toBeVisible();
@@ -89,7 +89,7 @@ for (const setup of [
 
     await page.route("**/api/attendance", (route) => route.abort(), { times: 1 });
     await first.click();
-    await expect(page.locator(".error[role=alert]")).toContainText("Verbindung");
+    await expect(page.locator("[data-ui=error][role=alert]")).toContainText("Verbindung");
     await expect(first).toBeChecked();
     await expect(first).toBeDisabled();
     await page.getByRole("button", { name: "Gespeicherten Stand neu laden" }).click();
@@ -104,7 +104,7 @@ for (const setup of [
     });
     expect(concurrent.ok()).toBe(true);
     await first.click();
-    await expect(page.locator(".error[role=alert]")).toContainText("inzwischen geändert");
+    await expect(page.locator("[data-ui=error][role=alert]")).toContainText("inzwischen geändert");
     await page.getByRole("button", { name: "Gespeicherten Stand neu laden" }).click();
     await expect(first).toBeChecked();
     await expect(first).toBeEnabled();
@@ -130,7 +130,7 @@ for (const setup of [
     await expect(lateRow.getByRole("cell", { name: "Nicht anwesend", exact: true }).first()).toBeVisible();
     await page.getByRole("button", { name: "Training", exact: true }).click();
     await page.getByRole("button", { name: "Kinder verwalten", exact: true }).click();
-    const childRow = page.locator(".child-editor").filter({ has: page.locator(`input[value="${setup.first}"]`) });
+    const childRow = page.locator("[data-ui=child-editor]").filter({ has: page.locator(`input[value="${setup.first}"]`) });
     await childRow.getByRole("button", { name: "Archivieren", exact: true }).click();
     await expect(childRow.getByRole("button", { name: "Reaktivieren" })).toBeVisible();
     await page.getByRole("button", { name: "Training", exact: true }).click();
@@ -146,7 +146,7 @@ for (const setup of [
     const overviewReads = () => reads.filter((path) => path === "/api/overview").length;
     const count = overviewReads();
     await page.getByRole("button", { name: "Tagesliste", exact: true }).click();
-    await expect(page.locator(".present-names")).toContainText(setup.first);
+    await expect(page.locator("[data-ui=present-names]")).toContainText(setup.first);
     expect(overviewReads()).toBe(count);
     await page.getByRole("button", { name: "Tabelle", exact: true }).click();
     const archivedRow = page.getByRole("row").filter({ has: page.getByRole("rowheader", { name: `${setup.first} Archiviert` }) });
@@ -175,7 +175,7 @@ for (const setup of [
     await page.getByRole("button", { name: "Kinder verwalten", exact: true }).click();
     await childRow.getByRole("button", { name: "Reaktivieren" }).click();
     await expect(childRow.getByRole("button", { name: "Archivieren", exact: true })).toBeVisible();
-    const secondRow = page.locator(".child-editor").filter({ has: page.locator(`input[value="${setup.second}"]`) });
+    const secondRow = page.locator("[data-ui=child-editor]").filter({ has: page.locator(`input[value="${setup.second}"]`) });
     await secondRow.getByRole("button", { name: "Löschen", exact: true }).click();
     await secondRow.getByRole("button", { name: "Abbrechen" }).click();
     await expect(secondRow).toBeVisible();

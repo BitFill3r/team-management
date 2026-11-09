@@ -121,6 +121,8 @@ Die Oberfläche unterstützt schnelle Anwesenheitserfassung am Handy. Kompaktere
 
 Die semantischen CSS-Variablen in [globals.css](./src/app/globals.css) sind die Implementierungsquelle. Frontmatter dokumentiert ihre Werte; neue Oberflächen verwenden dieselben Variablen.
 
+Tailwind CSS 4 bildet diese Werte über `@theme inline` auf semantische Utilities wie `bg-surface`, `text-muted`, `border-control-border` und `min-h-control` ab. Farben werden nicht pro Seite neu definiert. Radiuswerte liegen im Theme; die lokalen Schrift- und Farbvariablen bleiben erhalten.
+
 ### Primary
 - `green`: Aktionen, aktive Navigation, Links, Auswahl.
 - `lime`: helle Schriftfläche der AB-Marke.
@@ -150,6 +152,8 @@ Teamcontainer: 1040px maximal, volle verfügbare Breite, 32px seitliches Padding
 
 Bis 680px: 16px Containerpadding, 24px 16px Kartenpadding, 20px/16px Kopfabstände, zweizeilige Navigation und einspaltige Teilnehmerliste. Verwaltungsformulare ordnen sich vertikal an. Speicherhinweise dürfen umbrechen. Abschnittsabstand und Abstand zwischen Progress und Liste: 16px. Bei 390x844 wird der Listenbeginn spätestens bei y=650 geprüft; Datum und eine lange erste Teilnehmerzeile bleiben vollständig im ersten Bildschirm.
 
+Die bestehenden inklusiven Grenzen 380px und 680px verwenden explizite Tailwind-Media-Varianten (`[@media(width<=380px)]`, `[@media(width<=680px)]`), nicht die abweichenden Standard-Breakpoints. Browserprüfungen decken auch 381px und 681px ab.
+
 Teilnehmerliste: zwei Spalten auf Desktop, einspaltig auf Mobile; horizontale Trennlinien statt Einzelkarten. Öffentliche Umfragen sind maximal 740px breit. Login nutzt eine maximal 460px breite Mitteilungsfläche.
 
 Body ist ein vertikales Flexlayout mit mindestens 100dvh. Footer folgt dem Inhalt und bleibt auf kurzen Seiten unten, ohne Inhalte zu überdecken. Monatsübersichten scrollen intern horizontal mit stehender Namensspalte. Kalenderdialog bleibt viewportbegrenzt und intern scrollbar.
@@ -168,9 +172,15 @@ Flächen und Linien vermitteln Tiefe; Hauptkarten und Tabs verwenden keine Schat
 
 ### Buttons / Fields
 
-Gemeinsame Kontrolle über `--control-height` (48px Mindesthöhe), `--radius-control` und `--control-border` aus `globals.css`. Die Frontmatter-Höhe beschreibt dieses Minimum, keine feste Höhe. Primär dunkelgrün, sekundär zurückhaltend mit sichtbarem Rahmen. Eingaben, die implementierten Selects und Textareas teilen Schrift, Farben und Fokus; Textareas beginnen bei 100px und sind vertikal skalierbar. Checkboxen bleiben bewusst kleiner (26px Anwesenheit, 24px Umfragen) innerhalb ihrer beschrifteten Ziele. Placeholder sind explizit `muted`, nicht browserabhängig aufgehellt.
+Gemeinsame Kontrolle über [Button](./src/components/ui/button.tsx) und [Formularprimitive](./src/components/ui/fields.tsx), mit `--control-height` (48px Mindesthöhe), `--radius-control` und `--control-border`. Die Frontmatter-Höhe beschreibt dieses Minimum, keine feste Höhe. Primär dunkelgrün, sekundär zurückhaltend mit sichtbarem Rahmen. Input, Select und Textarea teilen Schrift, Farben, Disabled-Fläche und Fokus; Textareas beginnen bei 100px und sind vertikal skalierbar. Checkboxen bleiben bewusst kleiner (26px Anwesenheit, 24px Umfragen) innerhalb ihrer beschrifteten Ziele. Placeholder sind explizit `muted`, nicht browserabhängig aufgehellt.
 
 Hover: bestehendes `brightness(.93)`; Disabled: Opazität .48 und korrekter Cursor. Disabled ist kein Erfolgszustand.
+
+`Button` unterstützt `primary`, `secondary`, `text`, `danger`, `danger-secondary`, `danger-text` sowie bestehende Navigations-, Kalender- und Listenaktionen. Größen bilden nur vorhandene Anwendungsfälle ab. Normale Aktionen sind standardmäßig `type="button"`; Formulare markieren Submit-Aktionen explizit mit `type="submit"`.
+
+Die Primitive übernehmen native React-Props und bei Controls auch React-19-Refs. `required`, Längenlimits, `readOnly`, `disabled`, Fieldset-Vererbung und ARIA bleiben nativ. `aria-busy` oder `aria-disabled` ändern nicht automatisch das Interaktionsverhalten: Speichersperren, parallele Anwesenheit, Retry und Live-Regionen bleiben Aufgabe der fachlichen Aufrufer.
+
+`Label` hat normale Feld- und Checkbox-Zeilenlayouts; `Fieldset` vereinheitlicht die Umfragegruppen. Die Anwesenheitszeile bleibt ein fachliches Label mit eigenem Layout statt einer generischen Formularkomponente.
 
 ### ActionIcon
 
@@ -179,6 +189,10 @@ Hover: bestehendes `brightness(.93)`; Disabled: Opazität .48 und korrekter Curs
 ### Navigation / Panels
 
 Helle Leiste mit weißer, gerahmter aktiver Schaltfläche und grünem Text. Inaktive Texte verwenden `muted`; Hover hellt die Fläche auf, ohne den aktiven Rahmen zu ersetzen. Hauptnavigation und Verlaufsauswahl teilen dieselbe Regel. Mobile-Umbruch bleibt lesbar und ohne horizontales Seitenscrollen. Hauptflächen haben feine Rahmen; Abschnittsköpfe trennen Aufgaben durch eine horizontale Linie.
+
+[Panel, SectionHeading und NavigationGroup](./src/components/ui/panel.tsx) kapseln wiederkehrende Oberflächen. `Panel` unterscheidet reguläre und Login-Abstände. `NavigationButton` teilt aktive Zustände über `data-active`; Hauptnavigation behält `aria-current="page"`, die Verlaufsauswahl `aria-pressed`. Es wird kein neues ARIA-Tab- oder Tastaturmodell eingeführt.
+
+[ErrorMessage](./src/components/ui/feedback.tsx) kapselt sichtbare Fehler mit `role="alert"`. Erfolgs-/Speichermeldungen bleiben in den bestehenden Live-Regionen, damit keine doppelten Ansagen entstehen. Stabile `data-ui`-Attribute kennzeichnen fachliche Testanker unabhängig von Tailwind-Klassen.
 
 ### Attendance / Surveys
 
@@ -192,6 +206,8 @@ Agency-Footer mit bestätigtem Wortlaut, unterstrichenem Link und abgesichertem 
 
 Die bestehenden versalen Kontexttexte bleiben unverändert, sind aber keine Vorlage für neue dekorative Labels. Einzelne lokale Schriftgrößen und Warnfarben sowie die weiße Kalenderauswahl bleiben bestehende Ausnahmen. Der Progress-Track verwendet jetzt `surface-subtle`. Gerenderte Login-, Team-, Kalender-, Verlaufs-, Verwaltungs- und Umfrageansichten wurden bei 1280, 390 und 320px geprüft; die Browserprüfungen decken außerdem Schriftladung, Mindesthöhen, semantische Textkontraste, sichtbaren Fokus und Reduced Motion ab. Dies ist kein vollständiger WCAG-Audit.
 
+Layouts verwenden Tailwind-Utilities und die gemeinsamen Primitive statt früherer Selektoren wie `.card`, `.tabs` oder `.secondary`. Globale Basisregeln bleiben für Dokumenttypografie, Fokus, native Progress-Pseudoelemente und Dialog-Backdrop. Preflight-Unterschiede bei Tabellen und Dialogen sind explizit ausgeglichen. Die portablen Sidecar-Vorschauen beschreiben dieselben Designwerte ohne einen separaten Tailwind-Build im Vorschau-Renderer vorauszusetzen.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -200,9 +216,12 @@ Die bestehenden versalen Kontexttexte bleiben unverändert, sind aber keine Vorl
 - **Do** Hilfstexte, Fokus, Formulare und Mobile-Umbruch gemeinsam prüfen.
 - **Do** neue Gruppen durch Aufgaben und horizontale Linien gliedern.
 - **Do** gemeinsame SVG-Aktionen und die zweizeilige Monatsnavigation bis 380px erhalten.
+- **Do** Controls aus `src/components/ui/` importieren und fachliche Zustandsregeln beim Aufrufer lassen.
+- **Do** vollständige statische Tailwind-Klassen verwenden; Varianten nicht aus Klassenfragmenten zusammensetzen.
 
 ### Don't:
 - **Don't** neue Seiten mit dekorativen Innenkarten oder riesigen Hero-Blöcken aufbauen.
 - **Don't** Farbe als einzigen Statusindikator verwenden.
 - **Don't** Produkttexte oder Passwort-/Datentrennung als Designnebenwirkung ändern.
 - **Don't** externe Fonts zur Laufzeit nachladen.
+- **Don't** Primitive durch seitenabhängige Farb-/Disabled-Regeln überschreiben oder eine zweite globale Komponenten-CSS-Schicht aufbauen.

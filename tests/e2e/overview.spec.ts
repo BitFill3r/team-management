@@ -43,7 +43,7 @@ test("Monatsübersicht: drei Zustände, Monatsgrenzen, veraltete Antworten und F
   await page.screenshot({ path: "test-results/handy-monatsuebersicht.png" });
   const requests = seen.length;
   await page.getByRole("button", { name: "Tagesliste", exact: true }).click();
-  await expect(page.locator(".present-names").last()).toContainText("Emil");
+  await expect(page.locator("[data-ui=present-names]").last()).toContainText("Emil");
   expect(seen).toHaveLength(requests);
   await page.getByRole("button", { name: "Tabelle", exact: true }).click();
   await page.getByRole("button", { name: "Vorheriger Monat" }).click();
@@ -56,7 +56,7 @@ test("Monatsübersicht: drei Zustände, Monatsgrenzen, veraltete Antworten und F
   await expect(table).toBeVisible();
   await page.route("**/api/overview?month=2028-03", (route) => route.abort(), { times: 1 });
   await page.getByRole("button", { name: "Nächster Monat" }).click();
-  await expect(page.locator(".error[role=alert]")).toContainText("Verbindung");
+  await expect(page.locator("[data-ui=error][role=alert]")).toContainText("Verbindung");
   await expect(table).toHaveCount(0);
   await page.getByRole("button", { name: "Erneut versuchen" }).click();
   await expect(page.getByText("Keine Trainings in diesem Monat gespeichert.")).toBeVisible();

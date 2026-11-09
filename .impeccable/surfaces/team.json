@@ -16,6 +16,7 @@
     "Teamzugang und öffentliche Umfragen getrennt lassen.",
     "HEYDOT-Footer auf allen Seiten erhalten.",
     "Helle Flächen, leichte Navigation und gegliederte Listen statt dekorativer Kartenlandschaft.",
-    "Touch-Ziele, sichtbare Speicher-/Fehlerzustände und lokale Schrift ohne externen Laufzeitabruf erhalten."
+    "Touch-Ziele, sichtbare Speicher-/Fehlerzustände und lokale Schrift ohne externen Laufzeitabruf erhalten.",
+    "Tailwind-Utilities und native UI-Primitive aus src/components/ui/ verwenden; fachliche Interaktionsregeln bleiben bei den Aufrufern."
   ]
 }

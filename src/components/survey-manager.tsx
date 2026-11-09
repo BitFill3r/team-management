@@ -1,5 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input, Label } from "@/components/ui/fields";
+import { Panel, SectionHeading } from "@/components/ui/panel";
+import { ErrorMessage } from "@/components/ui/feedback";
+
 import { useEffect, useRef, useState } from "react";
 import { api, errorMessage, RequestError } from "@/lib/client";
 import type { Survey, SurveyConfig, SurveyDetail, SurveyResponse, SurveySummary } from "@/lib/survey-types";
@@ -56,35 +61,35 @@ export default function SurveyManager({ onBusy }: { onBusy: (busy: boolean) => v
   const survey = detail?.survey;
   const duplicates = detail ? duplicateResponses(detail.survey, detail.responses) : new Set<string>();
   const counts = detail ? surveyCounts(detail.survey, detail.responses) : [];
-  return <section className="card survey-manager">
-    <div className="section-heading"><h2>Umfragen</h2>
-      <button disabled={busy} onClick={() => { setCreating(true); setDetail(null); setGenerated(""); setError(""); setStatus(""); }}>Neue Umfrage</button></div>
+  return <Panel className="[overflow-wrap:anywhere] [&_label:not([data-ui=check-label])]:mt-3 [&_details]:border-t [&_details]:border-line [&_details]:py-[18px] [&_summary]:min-h-11 [&_summary]:cursor-pointer [&_summary]:py-2.5 [&_summary]:font-bold">
+    <SectionHeading><h2>Umfragen</h2>
+      <Button disabled={busy} onClick={() => { setCreating(true); setDetail(null); setGenerated(""); setError(""); setStatus(""); }}>Neue Umfrage</Button></SectionHeading>
     {status && <p role="status">{status}</p>}
-    {error && <div className="error" role="alert"><p>{error}</p>
-      <button className="secondary" disabled={busy} onClick={() => void run(async () => {
+    {error && <ErrorMessage  role="alert"><p>{error}</p>
+      <Button variant="secondary" disabled={busy} onClick={() => void run(async () => {
         if (survey) accept(await api<Result>(`surveys/${survey.id}`));
         else { setList(await api<SurveySummary[]>("surveys")); setLoading(false); }
-      }, "Gespeicherten Stand geladen.")}>Gespeicherten Stand laden</button></div>}
-    {generated && <div className="survey-secret" role="status"><strong>Passwort jetzt sichern</strong>
+      }, "Gespeicherten Stand geladen.")}>Gespeicherten Stand laden</Button></ErrorMessage>}
+    {generated && <div className="mb-5 rounded-control border border-green bg-surface-present p-4 [&_button]:mt-3" role="status"><strong>Passwort jetzt sichern</strong>
       <p>Es wird nur jetzt angezeigt und kann später nicht erneut abgerufen werden. Link und Passwort getrennt weitergeben.</p>
-      <label htmlFor="generated-survey-password">Generiertes Umfrage-Passwort</label>
-      <input id="generated-survey-password" readOnly value={generated} onFocus={(event) => event.target.select()} />
-      <button className="secondary" onClick={() => setGenerated("")}>Passwort gesichert, ausblenden</button></div>}
+      <Label htmlFor="generated-survey-password">Generiertes Umfrage-Passwort</Label>
+      <Input id="generated-survey-password" readOnly value={generated} onFocus={(event) => event.target.select()} />
+      <Button variant="secondary" onClick={() => setGenerated("")}>Passwort gesichert, ausblenden</Button></div>}
     {creating && <SurveyEditor initial={initialSurveyConfig} published={false} busy={busy} creating
       onSave={(config, password) => run(async () => accept(await api<Result>("surveys", "POST", { config, password })), "Entwurf erstellt.")} />}
     {survey && detail && <>
-      <div className="survey-toolbar"><strong>{statusNames[survey.status]}</strong>
-        <button disabled={busy} onClick={() => void run(async () => accept(await api<Result>(`surveys/${survey.id}/status`, "PATCH", {
+      <div className="my-5 flex flex-wrap items-center gap-2.5"><strong>{statusNames[survey.status]}</strong>
+        <Button disabled={busy} onClick={() => void run(async () => accept(await api<Result>(`surveys/${survey.id}/status`, "PATCH", {
           version: survey.version, status: survey.status === "open" ? "closed" : "open",
-        })), survey.status === "open" ? "Umfrage geschlossen." : "Umfrage geöffnet.")}>{survey.status === "open" ? "Umfrage schließen" : "Umfrage öffnen"}</button>
-        <button className="secondary" disabled={busy} onClick={() => void run(async () => accept(await api<Result>(`surveys/${survey.id}`)), "Gespeicherten Stand geladen.")}>Aktualisieren</button>
+        })), survey.status === "open" ? "Umfrage geschlossen." : "Umfrage geöffnet.")}>{survey.status === "open" ? "Umfrage schließen" : "Umfrage öffnen"}</Button>
+        <Button variant="secondary" disabled={busy} onClick={() => void run(async () => accept(await api<Result>(`surveys/${survey.id}`)), "Gespeicherten Stand geladen.")}>Aktualisieren</Button>
       </div>
-      <label htmlFor="survey-link">Teilnahmelink</label><input id="survey-link" readOnly value={`${typeof window === "undefined" ? "" : window.location.origin}/umfrage/${survey.token}`} onFocus={(event) => event.target.select()} />
-      <button className="secondary" disabled={busy} onClick={() => void run(async () => {
+      <Label htmlFor="survey-link">Teilnahmelink</Label><Input id="survey-link" readOnly value={`${typeof window === "undefined" ? "" : window.location.origin}/umfrage/${survey.token}`} onFocus={(event) => event.target.select()} />
+      <Button variant="secondary" disabled={busy} onClick={() => void run(async () => {
         if (!navigator.clipboard) throw new RequestError(400, "Bitte den Link im Feld markieren und kopieren.");
         await navigator.clipboard.writeText(`${window.location.origin}/umfrage/${survey.token}`);
-      }, "Link kopiert. Passwort bitte separat weitergeben.")}>Link kopieren</button>
-      <p className="muted">Alternativ den Link im Feld markieren und kopieren.</p>
+      }, "Link kopiert. Passwort bitte separat weitergeben.")}>Link kopieren</Button>
+      <p className="text-muted">Alternativ den Link im Feld markieren und kopieren.</p>
       <details><summary>Umfrage bearbeiten</summary>
         <SurveyEditor key={`${survey.id}-${survey.version}`} initial={configuration(survey)} published={survey.published} busy={busy} creating={false}
           onSave={(config) => run(async () => accept(await api<Result>(`surveys/${survey.id}`, "PATCH", { version: survey.version, config })), "Umfrage gespeichert.")} />
@@ -93,13 +98,13 @@ export default function SurveyManager({ onBusy }: { onBusy: (busy: boolean) => v
         event.preventDefault();
         if (!window.confirm("Neues Passwort setzen? Alle bisherigen Umfrage-Anmeldungen werden ungültig.")) return;
         void run(async () => { accept(await api<Result>(`surveys/${survey.id}/password`, "PATCH", { version: survey.version, password })); setPassword({ mode: "generated" }); }, "Passwort ersetzt.");
-      }}><PasswordFields disabled={busy} value={password} onChange={setPassword} /><button disabled={busy}>Passwort ersetzen</button></form></details>
+      }}><PasswordFields disabled={busy} value={password} onChange={setPassword} /><Button type="submit" disabled={busy}>Passwort ersetzen</Button></form></details>
       <h3>Auswertung · {detail.responses.length} Einträge</h3>
-      {survey.secondType === "single_choice" && <ul className="survey-counts">
+      {survey.secondType === "single_choice" && <ul data-ui="survey-counts" className="flex list-none flex-wrap gap-2.5 p-0 tabular-nums [&_li]:rounded-control [&_li]:bg-surface-present [&_li]:px-3 [&_li]:py-2">
         {counts.map((option) => <li key={option.id}>{option.label}: <strong>{option.count}</strong></li>)}
         <li>Keine Angabe: <strong>{detail.responses.filter((response) => !response.optionId).length}</strong></li>
       </ul>}
-      <button className="secondary" disabled={busy} onClick={() => void run(async () => {
+      <Button variant="secondary" disabled={busy} onClick={() => void run(async () => {
         const response = await fetch(`/api/surveys/${survey.id}/export`, { cache: "no-store" });
         if (!response.ok) {
           const result: { error?: string } = await response.json();
@@ -108,37 +113,37 @@ export default function SurveyManager({ onBusy }: { onBusy: (busy: boolean) => v
         const url = URL.createObjectURL(await response.blob());
         const link = document.createElement("a"); link.href = url; link.download = "umfrage.csv"; link.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-      }, "CSV heruntergeladen.")}>CSV exportieren</button>
+      }, "CSV heruntergeladen.")}>CSV exportieren</Button>
       {detail.responses.length === 0 && <p>Noch keine Antworten.</p>}
-      <div className="survey-response-list">{detail.responses.map((response) => <article className="survey-response" key={response.id}>
+      <div >{detail.responses.map((response) => <article data-ui="survey-response" className="my-[18px] border-0 border-t border-line py-5 [&_dl]:m-0 [&_dl]:grid [&_dl]:gap-3 [&_dt]:text-[.85rem] [&_dt]:font-bold [&_dd]:m-0 [&_dd]:whitespace-pre-wrap [&_dd]:[overflow-wrap:anywhere]" key={response.id}>
         {editing === response.id ? <ResponseEditor response={response} survey={survey} busy={busy}
           onCancel={() => setEditing(null)} onSave={(answer) => run(async () => accept(await api<Result>(`surveys/${survey.id}/responses`, "PATCH", {
             responseId: response.id, version: response.version, answer,
           })), "Antwort gespeichert.")} />
           : <><dl><div><dt>{survey.firstLabel}</dt><dd>{response.firstValue ?? "Keine Angabe"}</dd></div>
             <div><dt>{survey.secondLabel}</dt><dd>{survey.secondType === "text" ? response.secondValue ?? "Keine Angabe" : survey.options.find((option) => option.id === response.optionId)?.label ?? "Keine Angabe"}</dd></div></dl>
-            <p className="muted">{new Date(response.createdAt).toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}</p>
-            {duplicates.has(response.id) && <p className="survey-duplicate">Mögliche Doppelung im ersten Feld – bitte prüfen. Wird regulär mitgezählt.</p>}
-            <div className="survey-toolbar"><button className="secondary" disabled={busy} onClick={() => setEditing(response.id)}>Antwort bearbeiten</button>
-              <button className="secondary danger" disabled={busy} onClick={() => {
+            <p className="text-muted">{new Date(response.createdAt).toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}</p>
+            {duplicates.has(response.id) && <p data-ui="survey-duplicate" className="rounded-lg bg-[#fff3d8] p-2.5 text-[#805015]">Mögliche Doppelung im ersten Feld – bitte prüfen. Wird regulär mitgezählt.</p>}
+            <div className="my-5 flex flex-wrap items-center gap-2.5"><Button variant="secondary" disabled={busy} onClick={() => setEditing(response.id)}>Antwort bearbeiten</Button>
+              <Button variant="danger-secondary" disabled={busy} onClick={() => {
                 if (window.confirm("Diese Antwort endgültig löschen?")) void run(async () => accept(await api<Result>(`surveys/${survey.id}/responses`, "DELETE", {
                   responseId: response.id, version: response.version, confirmed: true,
                 })), "Antwort gelöscht.");
-              }}>Antwort löschen</button></div></>}
+              }}>Antwort löschen</Button></div></>}
       </article>)}</div>
-      <button className="danger-button" disabled={busy} onClick={() => {
+      <Button variant="danger" disabled={busy} onClick={() => {
         if (!window.confirm(`Umfrage „${survey.title}“ und alle ${detail.responses.length} Antworten endgültig löschen?`)) return;
         void run(async () => {
           await api(`surveys/${survey.id}`, "DELETE", { version: survey.version, confirmed: true });
           setDetail(null); setGenerated(""); setList((previous) => previous.filter((entry) => entry.id !== survey.id));
         }, "Umfrage und Antworten gelöscht.");
-      }}>Umfrage endgültig löschen</button>
+      }}>Umfrage endgültig löschen</Button>
     </>}
     {!creating && !detail && (loading ? <p role="status">Umfragen werden geladen …</p> : list.length === 0 && !error ? <p>Noch keine Umfragen angelegt.</p> : null)}
-    <ul className="history-list">{list.map((entry) => <li key={entry.id}><button className="history-entry" disabled={busy}
+    <ul className="mt-5 mb-0 list-none p-0 [&>li+li]:border-t [&>li+li]:border-line">{list.map((entry) => <li key={entry.id}><Button variant="list" size="list" className="flex items-center justify-between gap-3.5 [&_span]:text-[.85rem] [&_span]:font-normal [&_span]:text-muted [@media(width<=680px)]:flex-wrap" disabled={busy}
       onClick={() => void run(async () => accept(await api<Result>(`surveys/${entry.id}`)), "Umfrage geladen.")}>
-      {entry.title}<span>{statusNames[entry.status]} · {entry.count} Einträge</span></button></li>)}</ul>
-  </section>;
+      {entry.title}<span>{statusNames[entry.status]} · {entry.count} Einträge</span></Button></li>)}</ul>
+  </Panel>;
 }
 
 function ResponseEditor({ response, survey, busy, onCancel, onSave }: {
@@ -148,6 +153,6 @@ function ResponseEditor({ response, survey, busy, onCancel, onSave }: {
   const [value, setValue] = useState({ firstValue: response.firstValue ?? "", secondValue: response.secondValue ?? "", optionId: response.optionId ?? "" });
   return <form onSubmit={(event) => { event.preventDefault(); void onSave(answerPayload(value)); }}>
     <SurveyFields survey={survey} value={value} onChange={setValue} disabled={busy} />
-    <div className="survey-toolbar"><button disabled={busy}>Antwort speichern</button><button type="button" className="secondary" disabled={busy} onClick={onCancel}>Abbrechen</button></div>
+    <div className="my-5 flex flex-wrap items-center gap-2.5"><Button type="submit" disabled={busy}>Antwort speichern</Button><Button variant="secondary" type="button" disabled={busy} onClick={onCancel}>Abbrechen</Button></div>
   </form>;
 }
